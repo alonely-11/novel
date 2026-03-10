@@ -48,7 +48,7 @@ public class PageRespDto<T> {
     }
 
     public static <T> PageRespDto<T> of(long pageNum, long pageSize, long total, List<T> list) {
-        return new PageRespDto<T>(pageNum, pageSize, total, list);
+        return new PageRespDto<>(pageNum, pageSize, total, list);
     }
 
     /**
