@@ -7,6 +7,7 @@ import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.cache.RedisCacheWriter;
@@ -32,6 +33,7 @@ public class CacheConfig {
      * Caffeine 缓存管理器
      */
     @Bean
+    @Primary
     public CacheManager caffeineCacheManager() {
         SimpleCacheManager cacheManager = new SimpleCacheManager();
 
@@ -61,7 +63,8 @@ public class CacheConfig {
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .disableCachingNullValues().prefixCacheNameWith(CacheConsts.REDIS_CACHE_PREFIX);
 
-        Map<String, RedisCacheConfiguration> cacheMap = new LinkedHashMap<>(CacheConsts.CacheEnum.values().length);
+        Map<String, RedisCacheConfiguration> cacheMap = new LinkedHashMap<>(
+                CacheConsts.CacheEnum.values().length);
         for (CacheConsts.CacheEnum c : CacheConsts.CacheEnum.values()) {
             if (c.isRemote()) {
                 if (c.getTtl() > 0) {

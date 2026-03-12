@@ -223,7 +223,7 @@ novel:
   # 跨域配置
   cors:
     # 允许跨域的域名
-    allow-origins:
+    allowed-origins:
       - http://localhost:1024
       - http://localhost:8080
   # JWT 密钥

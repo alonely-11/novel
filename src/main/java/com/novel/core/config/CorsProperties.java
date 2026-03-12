@@ -7,9 +7,6 @@ import java.util.List;
 
 /**
  * 跨域配置属性
- *
- * @author xiongxiaoyang
- * @date 2022/5/17
  */
 @ConfigurationProperties(prefix = "novel.cors")
 @Data
