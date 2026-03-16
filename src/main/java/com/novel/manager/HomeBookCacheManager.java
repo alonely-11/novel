@@ -8,12 +8,14 @@ import com.novel.dao.mapper.BookInfoMapper;
 import com.novel.dao.mapper.HomeBookMapper;
 import com.novel.dto.resp.HomeBookRespDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.sql.Wrapper;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,7 +36,8 @@ public class HomeBookCacheManager {
 
         //1.从小说推荐表中找小说id得到列表
         List<HomeBook> homeBooks = homeBookMapper.selectList(null);
-        List<Long> bookIds = new ArrayList<>();
+        List<Long> bookIds;
+        List<HomeBookRespDto> homeBookRespDtos = new ArrayList<>();
         if (!(homeBooks == null || homeBooks.isEmpty())) {
             bookIds = homeBooks.stream().map(HomeBook::getBookId).toList();
 
@@ -44,15 +47,15 @@ public class HomeBookCacheManager {
             List<BookInfo> bookInfos = bookInfoMapper.selectList(queryWrapper);
 
             if(!CollectionUtils.isEmpty(bookInfos)){
-
-
-
-                //3.封装到对应dto中
+                bookInfos.forEach(bookInfo -> {
+                    //3.封装到对应dto中
+                    HomeBookRespDto homeBookRespDto = new HomeBookRespDto();
+                    BeanUtils.copyProperties(bookInfo,homeBookRespDto);
+                    homeBookRespDtos.add(homeBookRespDto);
+                });
+                return homeBookRespDtos;
             }
         }
-
-
-
-        return null;
+        return Collections.emptyList();
     }
 }

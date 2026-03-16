@@ -34,6 +34,9 @@ public class CacheConsts {
      * */
     public static final String HOME_FRIEND_LINK_CACHE_NAME = "homeFriendLinkCache";
 
+    public static final String IMG_VERIFY_CODE_CACHE_KEY =
+            REDIS_CACHE_PREFIX + "imgVerifyCodeCache::";
+
     /**
      * 缓存配置常量
      */
