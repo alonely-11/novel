@@ -39,7 +39,6 @@ public class HomeBookCacheManager {
         //1.从小说推荐表中找小说id得到列表
         List<HomeBook> homeBooks = homeBookMapper.selectList(null);
         List<Long> bookIds;
-        List<HomeBookRespDto> homeBookRespDtos = new ArrayList<>();
         if (!(homeBooks == null || homeBooks.isEmpty())) {
             bookIds = homeBooks.stream().map(HomeBook::getBookId).toList();
 
@@ -48,40 +47,41 @@ public class HomeBookCacheManager {
             queryWrapper.in("id", bookIds);
             List<BookInfo> bookInfos = bookInfoMapper.selectList(queryWrapper);
 
-            if(!CollectionUtils.isEmpty(bookInfos)){
-                bookInfos.forEach(bookInfo -> {
-                    //3.封装到对应dto中
-                    HomeBookRespDto homeBookRespDto = new HomeBookRespDto();
-                    homeBookRespDto.setBookId(bookInfo.getId());
-                    homeBookRespDto.setBookName(bookInfo.getBookName());
-                    homeBookRespDto.setPicUrl(bookInfo.getPicUrl());
-                    homeBookRespDto.setAuthorName(bookInfo.getAuthorName());
-                    homeBookRespDto.setBookDesc(bookInfo.getBookDesc());
-                    homeBookRespDtos.add(homeBookRespDto);
-                });
-
-                for(int i=0;i<homeBooks.size();i++){
-                    homeBookRespDtos.get(i).setType(homeBooks.get(i).getType());
-                }
-
-                return homeBookRespDtos;
-            }
-
-//            if (!CollectionUtils.isEmpty(bookInfos)) {
-//                Map<Long,BookInfo> bookInfoMap = bookInfos.stream().collect(Collectors.toMap(BookInfo::getId, Function.identity()));
-//                return homeBooks.stream().map(v->{
-//                    BookInfo bookInfo = bookInfoMap.get(v.getBookId());
+//            List<HomeBookRespDto> homeBookRespDtos = new ArrayList<>();
+//            if(!CollectionUtils.isEmpty(bookInfos)){
+//                bookInfos.forEach(bookInfo -> {
+//                    //3.封装到对应dto中
 //                    HomeBookRespDto homeBookRespDto = new HomeBookRespDto();
-//                    homeBookRespDto.setType(v.getType());
 //                    homeBookRespDto.setBookId(bookInfo.getId());
 //                    homeBookRespDto.setBookName(bookInfo.getBookName());
 //                    homeBookRespDto.setPicUrl(bookInfo.getPicUrl());
 //                    homeBookRespDto.setAuthorName(bookInfo.getAuthorName());
 //                    homeBookRespDto.setBookDesc(bookInfo.getBookDesc());
-//                    return homeBookRespDto;
-//                }).toList();
+//                    homeBookRespDtos.add(homeBookRespDto);
+//                });
 //
+//                for(int i=0;i<homeBooks.size();i++){
+//                    homeBookRespDtos.get(i).setType(homeBooks.get(i).getType());
 //                }
+//
+//                return homeBookRespDtos;
+//            }
+
+            if (!CollectionUtils.isEmpty(bookInfos)) {
+                Map<Long,BookInfo> bookInfoMap = bookInfos.stream().collect(Collectors.toMap(BookInfo::getId, Function.identity()));
+                return homeBooks.stream().map(v->{
+                    BookInfo bookInfo = bookInfoMap.get(v.getBookId());
+                    HomeBookRespDto homeBookRespDto = new HomeBookRespDto();
+                    homeBookRespDto.setType(v.getType());
+                    homeBookRespDto.setBookId(bookInfo.getId());
+                    homeBookRespDto.setBookName(bookInfo.getBookName());
+                    homeBookRespDto.setPicUrl(bookInfo.getPicUrl());
+                    homeBookRespDto.setAuthorName(bookInfo.getAuthorName());
+                    homeBookRespDto.setBookDesc(bookInfo.getBookDesc());
+                    return homeBookRespDto;
+                }).toList();
+
+                }
             }
         return Collections.emptyList();
     }
