@@ -1,4 +1,4 @@
-package com.novel.core.util;
+package com.novel.core.common.util;
 
 import lombok.experimental.UtilityClass;
 

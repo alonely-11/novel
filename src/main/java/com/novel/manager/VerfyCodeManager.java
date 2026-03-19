@@ -1,7 +1,7 @@
 package com.novel.manager;
 
 import com.novel.core.constant.CacheConsts;
-import com.novel.core.util.ImgVerifyCodeUtils;
+import com.novel.core.common.util.ImgVerifyCodeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
