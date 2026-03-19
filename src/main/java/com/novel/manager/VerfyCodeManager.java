@@ -18,8 +18,9 @@ public class VerfyCodeManager {
 
     private final StringRedisTemplate stringRedisTemplate;
 
-    public String genImgVerifyCode(String seesionId) throws IOException {
+    public String getImgVerifyCode(String seesionId) throws IOException {
         String verifyCode = ImgVerifyCodeUtils.getRandomVerifyCode(4);
+        log.info("生成验证码："+verifyCode);
         String img = ImgVerifyCodeUtils.generateVerifyCodeImg(verifyCode);
         stringRedisTemplate.opsForValue().set(CacheConsts.IMG_VERIFY_CODE_CACHE_KEY + seesionId
                 ,verifyCode, Duration.ofMinutes(5));

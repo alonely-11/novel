@@ -226,6 +226,7 @@ novel:
     allowed-origins:
       - http://localhost:1024
       - http://localhost:8080
+      - http://192.168.229.237:1024
   # JWT 密钥
   jwt:
     secret: E66559580A1ADF48CDD928516062F12E

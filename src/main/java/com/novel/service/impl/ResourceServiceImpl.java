@@ -27,7 +27,7 @@ public class ResourceServiceImpl implements ResourceService {
         String seesionId = IdWorker.get32UUID();
         return RestResp.ok(ImgVerifyCodeRespDto.builder()
                 .sessionId(seesionId)
-                .img(verfyCodeManager.genImgVerifyCode(seesionId))
+                .img(verfyCodeManager.getImgVerifyCode(seesionId))
                 .build());
     }
 }

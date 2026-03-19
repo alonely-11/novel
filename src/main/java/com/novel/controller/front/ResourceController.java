@@ -22,7 +22,6 @@ public class ResourceController {
 
     @GetMapping("img_verify_code")
     public RestResp<ImgVerifyCodeRespDto> getImgVerifyCode() throws IOException {
-        log.info("生成图片验证码");
         return resourceService.getImgVerifyCode();
     }
 

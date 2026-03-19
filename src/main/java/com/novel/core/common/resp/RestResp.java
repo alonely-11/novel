@@ -38,6 +38,7 @@ public class RestResp<T> {
     }
 
     private RestResp(T data){
+        this();
         this.data = data;
     }
 

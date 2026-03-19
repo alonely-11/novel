@@ -8,7 +8,6 @@ import com.novel.dao.mapper.BookInfoMapper;
 import com.novel.dao.mapper.HomeBookMapper;
 import com.novel.dto.resp.HomeBookRespDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -17,6 +16,9 @@ import java.sql.Wrapper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 首页推荐小说，缓存管理类
@@ -50,12 +52,37 @@ public class HomeBookCacheManager {
                 bookInfos.forEach(bookInfo -> {
                     //3.封装到对应dto中
                     HomeBookRespDto homeBookRespDto = new HomeBookRespDto();
-                    BeanUtils.copyProperties(bookInfo,homeBookRespDto);
+                    homeBookRespDto.setBookId(bookInfo.getId());
+                    homeBookRespDto.setBookName(bookInfo.getBookName());
+                    homeBookRespDto.setPicUrl(bookInfo.getPicUrl());
+                    homeBookRespDto.setAuthorName(bookInfo.getAuthorName());
+                    homeBookRespDto.setBookDesc(bookInfo.getBookDesc());
                     homeBookRespDtos.add(homeBookRespDto);
                 });
+
+                for(int i=0;i<homeBooks.size();i++){
+                    homeBookRespDtos.get(i).setType(homeBooks.get(i).getType());
+                }
+
                 return homeBookRespDtos;
             }
-        }
+
+//            if (!CollectionUtils.isEmpty(bookInfos)) {
+//                Map<Long,BookInfo> bookInfoMap = bookInfos.stream().collect(Collectors.toMap(BookInfo::getId, Function.identity()));
+//                return homeBooks.stream().map(v->{
+//                    BookInfo bookInfo = bookInfoMap.get(v.getBookId());
+//                    HomeBookRespDto homeBookRespDto = new HomeBookRespDto();
+//                    homeBookRespDto.setType(v.getType());
+//                    homeBookRespDto.setBookId(bookInfo.getId());
+//                    homeBookRespDto.setBookName(bookInfo.getBookName());
+//                    homeBookRespDto.setPicUrl(bookInfo.getPicUrl());
+//                    homeBookRespDto.setAuthorName(bookInfo.getAuthorName());
+//                    homeBookRespDto.setBookDesc(bookInfo.getBookDesc());
+//                    return homeBookRespDto;
+//                }).toList();
+//
+//                }
+            }
         return Collections.emptyList();
     }
 }
