@@ -14,7 +14,7 @@ import java.util.Objects;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class VerfyCodeManager {
+public class VerifyCodeManager {
 
     private final StringRedisTemplate stringRedisTemplate;
 
@@ -27,12 +27,12 @@ public class VerfyCodeManager {
         return img;
     }
 
-    public boolean imgVerifyCodeOK(String seesionId,String verifyCode) throws IOException {
-        return Objects.equals(
-                verifyCode.equals(stringRedisTemplate.opsForValue().get(CacheConsts.IMG_VERIFY_CODE_CACHE_KEY+seesionId)), verifyCode);
+    public boolean imgVerifyCodeOk(String sessionId,String verifyCode) {
+        return Objects.equals(stringRedisTemplate.opsForValue()
+                .get(CacheConsts.IMG_VERIFY_CODE_CACHE_KEY+sessionId), verifyCode);
     }
 
-    public void removeImgVerifyCode(String seesionId,String verifyCode) throws IOException {
+    public void removeImgVerifyCode(String seesionId){
         stringRedisTemplate.delete(CacheConsts.IMG_VERIFY_CODE_CACHE_KEY + seesionId);
     }
 }

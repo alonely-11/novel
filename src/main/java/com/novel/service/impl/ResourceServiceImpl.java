@@ -3,7 +3,8 @@ package com.novel.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.novel.core.common.resp.RestResp;
 import com.novel.dto.resp.ImgVerifyCodeRespDto;
-import com.novel.manager.VerfyCodeManager;
+import com.novel.manager.VerifyCodeManager;
+import com.novel.manager.VerifyCodeManager;
 import com.novel.service.ResourceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @Slf4j
 public class ResourceServiceImpl implements ResourceService {
 
-    private final VerfyCodeManager verfyCodeManager;
+    private final VerifyCodeManager verifyCodeManager;
 
 //    ImgVerifyCodeRespDto: sessionId img--String
     @Override
@@ -27,7 +28,7 @@ public class ResourceServiceImpl implements ResourceService {
         String seesionId = IdWorker.get32UUID();
         return RestResp.ok(ImgVerifyCodeRespDto.builder()
                 .sessionId(seesionId)
-                .img(verfyCodeManager.getImgVerifyCode(seesionId))
+                .img(verifyCodeManager.getImgVerifyCode(seesionId))
                 .build());
     }
 }
