@@ -21,6 +21,7 @@ import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -33,32 +34,32 @@ public class UserServiceImpl implements UserService {
     private final JwtUtils jwtUtils;
 
     @Override
-    public RestResp<UserRegisterRespDto> register(UserRegisterReqDto userRegisterReqDto) {
+    public RestResp<UserRegisterRespDto> register(UserRegisterReqDto dto) {
         // 校验图形验证码是否正确
-        if (!verifyCodeManager.imgVerifyCodeOk(userRegisterReqDto.getSessionId(), userRegisterReqDto.getVelCode())) {
+        if (!verifyCodeManager.imgVerifyCodeOk(dto.getSessionId(), dto.getVelCode())) {
             // 图形验证码校验失败
             throw new BusinessException(ErrorCodeEnum.USER_VERIFY_CODE_ERROR);
         }
 
         QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(DatabaseConsts.UserInfoTable.COLUMN_USERNAME, userRegisterReqDto.getUsername())
+        queryWrapper.eq(DatabaseConsts.UserInfoTable.COLUMN_USERNAME, dto.getUsername())
                 .last(DatabaseConsts.SqlEnum.LIMIT_1.getSql());
         if(userInfoMapper.selectCount(queryWrapper) > 0) {
             throw new BusinessException(ErrorCodeEnum.USER_NAME_EXIST);
         }
 
         UserInfo userInfo = new UserInfo();
-        userInfo.setUsername(userRegisterReqDto.getUsername());
+        userInfo.setUsername(dto.getUsername());
         userInfo.setPassword(DigestUtils.md5DigestAsHex(
-                userRegisterReqDto.getPassword().getBytes(StandardCharsets.UTF_8)
+                dto.getPassword().getBytes(StandardCharsets.UTF_8)
         ));
-        userInfo.setNickName(userRegisterReqDto.getUsername());
+        userInfo.setNickName(dto.getUsername());
         userInfo.setCreateTime(LocalDateTime.now());
         userInfo.setUpdateTime(LocalDateTime.now());
         userInfo.setSalt("0");
         userInfoMapper.insert(userInfo);
 
-        verifyCodeManager.removeImgVerifyCode(userRegisterReqDto.getSessionId());
+        verifyCodeManager.removeImgVerifyCode(dto.getSessionId());
 
         return RestResp.ok(
                 UserRegisterRespDto.builder()
@@ -72,8 +73,6 @@ public class UserServiceImpl implements UserService {
     public RestResp<UserLoginRespDto> login(UserLoginReqDto dto) {
 
         QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
-//        queryWrapper.eq(DatabaseConsts.UserInfoTable.COLUMN_USERNAME, dto.getUsername())
-//                .last(DatabaseConsts.SqlEnum.LIMIT_1.getSql());
 
         queryWrapper.eq(DatabaseConsts.UserInfoTable.COLUMN_USERNAME, dto.getUsername());
 
@@ -81,25 +80,15 @@ public class UserServiceImpl implements UserService {
 
         if (userInfo == null) {throw new BusinessException(ErrorCodeEnum.USER_ACCOUNT_NOT_EXIST);}
 
-        if (!(userInfo.getPassword().equals(DigestUtils.md5DigestAsHex(dto.getPassword().getBytes(StandardCharsets.UTF_8))))) {
+        if (!Objects.equals(userInfo.getPassword(),
+                DigestUtils.md5DigestAsHex(dto.getPassword().getBytes(StandardCharsets.UTF_8)))) {
             throw new BusinessException(ErrorCodeEnum.USER_PASSWORD_ERROR);
         }
-
-//        if(userInfoMapper.selectCount(queryWrapper) < 1) {
-//            throw new BusinessException(ErrorCodeEnum.USER_ACCOUNT_NOT_EXIST);
-//        }
-
-//        queryWrapper.eq(DatabaseConsts.UserInfoTable.COLUMN_PASSWORD, DigestUtils.md5DigestAsHex(
-//                dto.getPassword().getBytes(StandardCharsets.UTF_8)));
-
-//        if(userInfoMapper.selectCount(queryWrapper) < 1) {
-//            throw new BusinessException(ErrorCodeEnum.USER_PASSWORD_ERROR);
-//        }
 
         return RestResp.ok(
                 UserLoginRespDto.builder()
                         .uid(userInfo.getId())
-                        .nickname(userInfo.getNickName())
+                        .nickName(userInfo.getNickName())
                         .token(jwtUtils.generateToken(userInfo.getId(),SystemConfigConsts.NOVEL_FRONT_KEY))
                         .build()
         );

@@ -8,6 +8,6 @@ import lombok.Data;
 public class UserLoginRespDto {
 
     private Long uid;
-    private String nickname;
+    private String nickName;
     private String token;
 }

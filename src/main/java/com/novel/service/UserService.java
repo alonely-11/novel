@@ -5,7 +5,6 @@ import com.novel.dto.req.UserLoginReqDto;
 import com.novel.dto.req.UserRegisterReqDto;
 import com.novel.dto.resp.UserLoginRespDto;
 import com.novel.dto.resp.UserRegisterRespDto;
-import jakarta.validation.Valid;
 
 
 public interface UserService {
@@ -15,7 +14,13 @@ public interface UserService {
      * @param dto 注册参数
      * @return JWT
      */
-    RestResp<UserRegisterRespDto> register(@Valid UserRegisterReqDto dto);
+    RestResp<UserRegisterRespDto> register( UserRegisterReqDto dto);
 
-    RestResp<UserLoginRespDto> login(@Valid UserLoginReqDto dto);
+    /**
+     * 用户登录
+     *
+     * @param dto 登录参数
+     * @return JWT + 昵称
+     */
+    RestResp<UserLoginRespDto> login( UserLoginReqDto dto);
 }
