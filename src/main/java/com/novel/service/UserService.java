@@ -1,7 +1,9 @@
 package com.novel.service;
 
 import com.novel.core.common.resp.RestResp;
+import com.novel.dto.req.UserLoginReqDto;
 import com.novel.dto.req.UserRegisterReqDto;
+import com.novel.dto.resp.UserLoginRespDto;
 import com.novel.dto.resp.UserRegisterRespDto;
 import jakarta.validation.Valid;
 
@@ -14,4 +16,6 @@ public interface UserService {
      * @return JWT
      */
     RestResp<UserRegisterRespDto> register(@Valid UserRegisterReqDto dto);
+
+    RestResp<UserLoginRespDto> login(@Valid UserLoginReqDto dto);
 }

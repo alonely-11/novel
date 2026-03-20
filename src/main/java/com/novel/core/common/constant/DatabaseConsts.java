@@ -20,6 +20,7 @@ public class DatabaseConsts {
         }
 
         public static final String COLUMN_USERNAME = "username";
+        public static final String COLUMN_PASSWORD = "password";
 
     }
 

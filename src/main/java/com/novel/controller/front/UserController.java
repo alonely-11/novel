@@ -2,7 +2,9 @@ package com.novel.controller.front;
 
 import com.novel.core.common.constant.ApiRouterConsts;
 import com.novel.core.common.resp.RestResp;
+import com.novel.dto.req.UserLoginReqDto;
 import com.novel.dto.req.UserRegisterReqDto;
+import com.novel.dto.resp.UserLoginRespDto;
 import com.novel.dto.resp.UserRegisterRespDto;
 import com.novel.service.UserService;
 import jakarta.validation.Valid;
@@ -22,5 +24,10 @@ public class UserController {
     @PostMapping("register")
     public RestResp<UserRegisterRespDto> register(@Valid @RequestBody UserRegisterReqDto dto) {
         return userService.register(dto);
+    }
+
+    @PostMapping("login")
+    public RestResp<UserLoginRespDto> login(@Valid @RequestBody UserLoginReqDto dto) {
+        return userService.login(dto);
     }
 }
