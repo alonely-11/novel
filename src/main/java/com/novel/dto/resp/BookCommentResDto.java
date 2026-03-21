@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class BookCommentResDto {
+public class BookCommentRespDto {
 
     private Long commentTotal;
     private List<CommentInfo> comments;

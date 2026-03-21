@@ -9,12 +9,13 @@ import com.novel.dao.entity.UserInfo;
 import com.novel.dao.mapper.BookCommentMapper;
 import com.novel.dao.mapper.UserInfoMapper;
 import com.novel.dto.req.UserCommentReqDto;
-import com.novel.dto.resp.BookCommentResDto;
+import com.novel.dto.resp.BookCommentRespDto;
 import com.novel.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -81,43 +82,49 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public RestResp<BookCommentResDto> listNewestComment(Long bookId) {
+    public RestResp<BookCommentRespDto> listNewestComment(Long bookId) {
 
         QueryWrapper<BookComment> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(DatabaseConsts.BookCommentTable.COLUMN_BOOK_ID,bookId);
 
+
         Long commentTotal = bookCommentMapper.selectCount(queryWrapper);
+        if (commentTotal > 0) {
 
-        queryWrapper.orderByDesc(DatabaseConsts.CommonColumnEnum.CREATE_TIME.getName())
-                .last(DatabaseConsts.SqlEnum.LIMIT_5.getSql());
+            queryWrapper.orderByDesc(DatabaseConsts.CommonColumnEnum.CREATE_TIME.getName())
+                    .last(DatabaseConsts.SqlEnum.LIMIT_5.getSql());
 
-        List<BookComment> bookComments = bookCommentMapper.selectList(queryWrapper);
+            List<BookComment> bookComments = bookCommentMapper.selectList(queryWrapper);
 
-        List<Long> ids = bookComments.stream().map(BookComment::getUserId).toList();
-        QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
-        userInfoQueryWrapper.in(DatabaseConsts.CommonColumnEnum.ID.getName(),ids);
-        List<UserInfo> userInfos = userInfoMapper.selectList(userInfoQueryWrapper);
+            List<Long> ids = bookComments.stream().map(BookComment::getUserId).toList();
+            QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
+            userInfoQueryWrapper.in(DatabaseConsts.CommonColumnEnum.ID.getName(), ids);
+            List<UserInfo> userInfos = userInfoMapper.selectList(userInfoQueryWrapper);
 
-        Map<Long,UserInfo> userInfoMap = userInfos.stream().collect(Collectors.toMap(UserInfo::getId, Function.identity()));
+            Map<Long, UserInfo> userInfoMap = userInfos.stream().collect(Collectors.toMap(UserInfo::getId, Function.identity()));
 
-        List<BookCommentResDto.CommentInfo> commentInfos =
-                bookComments.stream().map(v-> {
+            List<BookCommentRespDto.CommentInfo> commentInfos =
+                    bookComments.stream().map(v -> {
 
-                    UserInfo userInfo = userInfoMap.get(v.getUserId());
+                        UserInfo userInfo = userInfoMap.get(v.getUserId());
 
-                    return BookCommentResDto.CommentInfo.builder()
-                            .id(v.getId())
-                            .commentContent(v.getCommentContent())
-                            .commentUser(userInfo.getUsername())
-                            .commentUserId(v.getUserId())
-                            .commentUserPhoto(userInfo.getUserPhoto())
-                            .commentTime(v.getCreateTime())
-                            .build();
-                }).toList();
+                        return BookCommentRespDto.CommentInfo.builder()
+                                .id(v.getId())
+                                .commentContent(v.getCommentContent())
+                                .commentUser(userInfo.getUsername())
+                                .commentUserId(v.getUserId())
+                                .commentUserPhoto(userInfo.getUserPhoto())
+                                .commentTime(v.getCreateTime())
+                                .build();
+                    }).toList();
 
-        return RestResp.ok(BookCommentResDto.builder()
+            return RestResp.ok(BookCommentRespDto.builder()
+                    .commentTotal(commentTotal)
+                    .comments(commentInfos)
+                    .build());
+        }else return RestResp.ok(BookCommentRespDto.builder()
                 .commentTotal(commentTotal)
-                .comments(commentInfos)
+                .comments(Collections.emptyList())
                 .build());
     }
 

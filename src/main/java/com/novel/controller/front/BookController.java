@@ -2,7 +2,7 @@ package com.novel.controller.front;
 
 import com.novel.core.common.constant.ApiRouterConsts;
 import com.novel.core.common.resp.RestResp;
-import com.novel.dto.resp.BookCommentResDto;
+import com.novel.dto.resp.BookCommentRespDto;
 import com.novel.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,7 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping("comment/newest_list")
-    public RestResp<BookCommentResDto> listNewestComments(Long bookId){
+    public RestResp<BookCommentRespDto> listNewestComments(Long bookId){
         return bookService.listNewestComment(bookId);
     }
 
