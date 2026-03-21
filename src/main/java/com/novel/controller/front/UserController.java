@@ -6,6 +6,7 @@ import com.novel.core.common.resp.RestResp;
 import com.novel.dto.req.UserCommentReqDto;
 import com.novel.dto.req.UserLoginReqDto;
 import com.novel.dto.req.UserRegisterReqDto;
+import com.novel.dto.resp.BookCommentResDto;
 import com.novel.dto.resp.UserLoginRespDto;
 import com.novel.dto.resp.UserRegisterRespDto;
 import com.novel.service.BookService;

@@ -47,26 +47,6 @@ public class HomeBookCacheManager {
             queryWrapper.in("id", bookIds);
             List<BookInfo> bookInfos = bookInfoMapper.selectList(queryWrapper);
 
-//            List<HomeBookRespDto> homeBookRespDtos = new ArrayList<>();
-//            if(!CollectionUtils.isEmpty(bookInfos)){
-//                bookInfos.forEach(bookInfo -> {
-//                    //3.封装到对应dto中
-//                    HomeBookRespDto homeBookRespDto = new HomeBookRespDto();
-//                    homeBookRespDto.setBookId(bookInfo.getId());
-//                    homeBookRespDto.setBookName(bookInfo.getBookName());
-//                    homeBookRespDto.setPicUrl(bookInfo.getPicUrl());
-//                    homeBookRespDto.setAuthorName(bookInfo.getAuthorName());
-//                    homeBookRespDto.setBookDesc(bookInfo.getBookDesc());
-//                    homeBookRespDtos.add(homeBookRespDto);
-//                });
-//
-//                for(int i=0;i<homeBooks.size();i++){
-//                    homeBookRespDtos.get(i).setType(homeBooks.get(i).getType());
-//                }
-//
-//                return homeBookRespDtos;
-//            }
-
             if (!CollectionUtils.isEmpty(bookInfos)) {
                 Map<Long,BookInfo> bookInfoMap = bookInfos.stream().collect(Collectors.toMap(BookInfo::getId, Function.identity()));
                 return homeBooks.stream().map(v->{
