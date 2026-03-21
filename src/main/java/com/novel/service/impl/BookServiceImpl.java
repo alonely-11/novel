@@ -44,4 +44,17 @@ public class BookServiceImpl implements BookService {
         return RestResp.ok(null);
     }
 
+    @Override
+    public RestResp<Void> updateComment(Long userId,Long id, String content) {
+
+        QueryWrapper<BookComment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(DatabaseConsts.CommonColumnEnum.ID.getName(), id)
+                .eq(DatabaseConsts.BookCommentTable.COLUMN_USER_ID,userId);
+        BookComment bookComment = new BookComment();
+        bookComment.setCommentContent(content);
+        bookComment.setUpdateTime(LocalDateTime.now());
+        bookCommentMapper.update(bookComment,queryWrapper);
+        return RestResp.ok(null);
+    }
+
 }

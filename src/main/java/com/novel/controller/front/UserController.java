@@ -13,10 +13,7 @@ import com.novel.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(ApiRouterConsts.API_FRONT_USER_URL_PREFIX)
@@ -28,20 +25,47 @@ public class UserController {
 
     private final BookService bookService;
 
+    /**
+     * 注册
+     * @param dto
+     * @return
+     */
     @PostMapping("register")
     public RestResp<UserRegisterRespDto> register(@Valid @RequestBody UserRegisterReqDto dto) {
         return userService.register(dto);
     }
 
+    /**
+     * 登录
+     * @param dto
+     * @return
+     */
     @PostMapping("login")
     public RestResp<UserLoginRespDto> login(@Valid @RequestBody UserLoginReqDto dto) {
         return userService.login(dto);
     }
 
+    /**
+     * 评论
+     * @param dto
+     * @return
+     */
     @PostMapping("comment")
     public RestResp<Void> comment(@Valid @RequestBody UserCommentReqDto dto){
         dto.setUserId(UserHolder.getUserId());
         return bookService.saveComment(dto);
+    }
+
+    /**
+     * 修改评论
+     * @param id
+     * @param content
+     * @return
+     */
+    @PutMapping("comment/{id}")
+    public RestResp<Void> updateComment(@PathVariable Long id, String content){
+        return bookService.updateComment(1L,id,content);
+//        return bookService.updateComment(UserHolder.getUserId(),id,content);
     }
 
 }
