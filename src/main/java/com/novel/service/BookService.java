@@ -8,4 +8,6 @@ public interface BookService {
     RestResp<Void> saveComment(UserCommentReqDto dto);
 
     RestResp<Void> updateComment(Long userId,Long id, String content);
+
+    RestResp<Void> deleteComment(Long userId, Long id);
 }

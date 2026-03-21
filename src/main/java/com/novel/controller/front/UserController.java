@@ -58,14 +58,23 @@ public class UserController {
 
     /**
      * 修改评论
-     * @param id
+     * @param id 评论id
      * @param content
      * @return
      */
     @PutMapping("comment/{id}")
     public RestResp<Void> updateComment(@PathVariable Long id, String content){
-        return bookService.updateComment(1L,id,content);
-//        return bookService.updateComment(UserHolder.getUserId(),id,content);
+        return bookService.updateComment(UserHolder.getUserId(),id,content);
+    }
+
+    /**
+     * 删除评论
+     * @param id 评论id
+     * @return
+     */
+    @DeleteMapping("comment/{id}")
+    public RestResp<Void> deleteComment(@PathVariable Long id){
+        return bookService.deleteComment(UserHolder.getUserId(),id);
     }
 
 }

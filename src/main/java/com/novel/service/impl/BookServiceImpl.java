@@ -57,4 +57,15 @@ public class BookServiceImpl implements BookService {
         return RestResp.ok(null);
     }
 
+    @Override
+    public RestResp<Void> deleteComment(Long userId, Long id) {
+
+        QueryWrapper<BookComment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(DatabaseConsts.CommonColumnEnum.ID.getName(), id)
+                .eq(DatabaseConsts.BookCommentTable.COLUMN_USER_ID,userId);
+        bookCommentMapper.delete(queryWrapper);
+
+        return RestResp.ok(null);
+    }
+
 }
