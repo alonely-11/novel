@@ -3,6 +3,7 @@ package com.novel.controller.front;
 import com.novel.core.common.constant.ApiRouterConsts;
 import com.novel.core.common.resp.RestResp;
 import com.novel.dto.resp.HomeBookRespDto;
+import com.novel.dto.resp.HomeFriendLinkRespDto;
 import com.novel.service.HomeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,11 @@ public class HomeController {
     @GetMapping("books")
     public RestResp<List<HomeBookRespDto>> listHomeBooks(){
         return homeService.listHomeBooks();
+    }
+
+    @GetMapping("friend_Link/list")
+    public RestResp<List<HomeFriendLinkRespDto>> listHomeFriendLinks(){
+        return homeService.listHomeFriendLinks();
     }
 
 
