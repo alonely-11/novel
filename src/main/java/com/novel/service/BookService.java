@@ -18,4 +18,8 @@ public interface BookService {
     RestResp<BookCommentRespDto> listNewestComments(Long bookId);
 
     RestResp<List<BookRankRespDto>> listVisitRankBooks();
+
+    RestResp<List<BookRankRespDto>> listNewestRankBooks();
+
+    RestResp<List<BookRankRespDto>> listUpdateRankBooks();
 }

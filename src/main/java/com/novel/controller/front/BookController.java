@@ -29,4 +29,14 @@ public class BookController {
         return bookService.listVisitRankBooks();
     }
 
+    @GetMapping("newest_rank")
+    public RestResp<List<BookRankRespDto>> listNewestRankBooks(){
+        return bookService.listNewestRankBooks();
+    }
+
+    @GetMapping("update_rank")
+    public RestResp<List<BookRankRespDto>> listUpdateRankBooks(){
+        return bookService.listUpdateRankBooks();
+    }
+
 }

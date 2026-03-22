@@ -32,9 +32,10 @@ public class NewServiceImpl implements NewsService {
     @Override
     public RestResp<NewsInfoRespDto> getNews(Long id) {
 
-        QueryWrapper<NewsInfo> newsInfoQueryWrapper = new QueryWrapper<>();
-        newsInfoQueryWrapper.eq(DatabaseConsts.CommonColumnEnum.ID.getName(), id);
-        NewsInfo newsInfo = newsInfoMapper.selectOne(newsInfoQueryWrapper);
+//        QueryWrapper<NewsInfo> newsInfoQueryWrapper = new QueryWrapper<>();
+//        newsInfoQueryWrapper.eq(DatabaseConsts.CommonColumnEnum.ID.getName(), id);
+//        NewsInfo newsInfo = newsInfoMapper.selectOne(newsInfoQueryWrapper);
+        NewsInfo newsInfo = newsInfoMapper.selectById(id);
 
         QueryWrapper<NewsContent> newsContentQueryWrapper = new QueryWrapper<>();
         newsContentQueryWrapper.eq(DatabaseConsts.NewsContentTable.COLUMN_NEWS_ID,id);
@@ -53,7 +54,7 @@ public class NewServiceImpl implements NewsService {
 
     @Override
     public RestResp<List<NewsInfoRespDto>> listLatestNews() {
-        return newsCacheManager.listLatestNews();
+        return RestResp.ok(newsCacheManager.listLatestNews());
     }
 
 }

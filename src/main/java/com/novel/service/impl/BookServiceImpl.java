@@ -13,6 +13,7 @@ import com.novel.dao.mapper.UserInfoMapper;
 import com.novel.dto.req.UserCommentReqDto;
 import com.novel.dto.resp.BookCommentRespDto;
 import com.novel.dto.resp.BookRankRespDto;
+import com.novel.manager.BookRankCacheManager;
 import com.novel.manager.dao.UserDaoManager;
 import com.novel.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class BookServiceImpl implements BookService {
 
     private final UserDaoManager userDaoManager;
 
-    private final BookInfoMapper bookInfoMapper;
+    private final BookRankCacheManager bookRankCacheManager;
 
 //    private final UserInfoMapper userInfoMapper;
 
@@ -128,27 +129,17 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public RestResp<List<BookRankRespDto>> listVisitRankBooks() {
+        return RestResp.ok(bookRankCacheManager.listVisitRankBooks());
+    }
 
-        QueryWrapper<BookInfo> queryWrapper = new QueryWrapper<>();
-        queryWrapper.orderByDesc(DatabaseConsts.BookTable.COLUMN_VISIT_COUNT)
-                .last(DatabaseConsts.SqlEnum.LIMIT_30.getSql());
+    @Override
+    public RestResp<List<BookRankRespDto>> listNewestRankBooks() {
+        return RestResp.ok(bookRankCacheManager.listNewestRankBookds());
+    }
 
-        List<BookInfo> bookInfos = bookInfoMapper.selectList(queryWrapper);
-
-        return RestResp.ok(bookInfos.stream().map(v->
-                BookRankRespDto.builder()
-                        .id(v.getId())
-                        .categoryId(v.getCategoryId())
-                        .categoryName(v.getCategoryName())
-                        .picUrl(v.getPicUrl())
-                        .bookName(v.getBookName())
-                        .authorName(v.getAuthorName())
-                        .bookDesc(v.getBookDesc())
-                        .wordCount(v.getWordCount())
-                        .lastChapterName(v.getLastChapterName())
-                        .lastChapterUpdateTime(v.getLastChapterUpdateTime())
-                        .build()
-                ).toList());
+    @Override
+    public RestResp<List<BookRankRespDto>> listUpdateRankBooks() {
+        return RestResp.ok(bookRankCacheManager.listUpdateRankBooks());
     }
 
 //    @Override

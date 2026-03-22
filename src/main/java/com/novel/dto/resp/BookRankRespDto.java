@@ -3,11 +3,12 @@ package com.novel.dto.resp;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class BookRankRespDto {
+public class BookRankRespDto implements Serializable {
 
     private Long id;
     private Long categoryId;
