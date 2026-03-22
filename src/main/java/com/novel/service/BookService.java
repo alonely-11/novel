@@ -3,7 +3,9 @@ package com.novel.service;
 import com.novel.core.common.resp.RestResp;
 import com.novel.dto.req.UserCommentReqDto;
 import com.novel.dto.resp.BookCommentRespDto;
-import com.novel.dto.resp.BookCommentRespDto;
+import com.novel.dto.resp.BookRankRespDto;
+
+import java.util.List;
 
 public interface BookService {
 
@@ -13,5 +15,7 @@ public interface BookService {
 
     RestResp<Void> deleteComment(Long userId, Long id);
 
-    RestResp<BookCommentRespDto> listNewestComment(Long bookId);
+    RestResp<BookCommentRespDto> listNewestComments(Long bookId);
+
+    RestResp<List<BookRankRespDto>> listVisitRankBooks();
 }
