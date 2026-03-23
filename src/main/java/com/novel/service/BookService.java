@@ -7,6 +7,7 @@ import com.novel.dto.resp.BookCommentRespDto;
 import com.novel.dto.resp.BookInfoRespDto;
 import com.novel.dto.resp.BookRankRespDto;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public interface BookService {
@@ -28,4 +29,6 @@ public interface BookService {
     RestResp<BookInfoRespDto> getBookById(Long bookId);
 
     RestResp<BookChapterAboutRespDto> getLastChapterAbout(Long bookId);
+
+    RestResp<List<BookInfoRespDto>> listRecBooks(Long bookId) throws NoSuchAlgorithmException;
 }

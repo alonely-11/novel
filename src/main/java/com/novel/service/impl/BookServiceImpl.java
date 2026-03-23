@@ -18,11 +18,12 @@ import com.novel.manager.dao.UserDaoManager;
 import com.novel.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
+
+    private static final Integer REC_BOOK_COUNT = 4;
 
     private final BookCommentMapper bookCommentMapper;
 
@@ -174,6 +177,45 @@ public class BookServiceImpl implements BookService {
                 .chapterTotal(chapterTotal)
                 .contentSummary(content.substring(0,30))
                 .build());
+    }
+
+    @Override
+    public RestResp<List<BookInfoRespDto>> listRecBooks(Long bookId) throws NoSuchAlgorithmException {
+
+        //拿到小说信息
+        BookInfoRespDto bookInfo = bookInfoCacheManager.getBookInfo(bookId);
+
+        List<Long> lastUpdateIdList = bookInfoCacheManager.getLastUpdateIdList(bookInfo.getCategoryId());
+
+        //检验非空与排除本书
+        if(CollectionUtils.isEmpty(lastUpdateIdList)){
+            return RestResp.ok(Collections.emptyList());
+        }
+
+        List<Long> candidateIdList = lastUpdateIdList.stream().filter(
+                id-> !Objects.equals(id, bookId)
+        ).toList();
+
+        if (CollectionUtils.isEmpty(candidateIdList)) {
+            return RestResp.ok(Collections.emptyList());
+        }
+        // 确定最小推荐书本数量
+        int actuallyRecCount = Math.min(REC_BOOK_COUNT,candidateIdList.size());
+
+        List<BookInfoRespDto> respDtoList = new ArrayList<>();
+        Set<Integer> recIdIndexSet = new HashSet<>();
+        Random rand= SecureRandom.getInstanceStrong();
+
+        while (respDtoList.size() < actuallyRecCount && recIdIndexSet.size() < candidateIdList.size()) {
+            int recIdIndex = rand.nextInt(candidateIdList.size());
+            if (!recIdIndexSet.contains(recIdIndex)) {
+                recIdIndexSet.add(recIdIndex);
+                respDtoList.add(bookInfoCacheManager.getBookInfo(candidateIdList.get(recIdIndex)));
+            }
+        }
+
+        //返回
+        return RestResp.ok(respDtoList);
     }
 
 //    @Override

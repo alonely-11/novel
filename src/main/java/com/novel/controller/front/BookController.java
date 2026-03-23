@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @RestController
@@ -50,6 +51,11 @@ public class BookController {
     @GetMapping("last_chapter/about")
     public RestResp<BookChapterAboutRespDto> getLastChapterAbout(Long bookId){
         return bookService.getLastChapterAbout(bookId);
+    }
+
+    @GetMapping("rec_list")
+    public RestResp<List<BookInfoRespDto>> listRecBooks(Long bookId) throws NoSuchAlgorithmException {
+        return bookService.listRecBooks(bookId);
     }
 
 }

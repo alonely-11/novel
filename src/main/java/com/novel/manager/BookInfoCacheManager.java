@@ -14,6 +14,8 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class BookInfoCacheManager {
@@ -72,4 +74,19 @@ public class BookInfoCacheManager {
         //调用此方法自动清除小说信息缓存
     }
 
+    @Cacheable(cacheManager = CacheConsts.CAFFEINE_CACHE_MANAGER,
+    value = CacheConsts.LAST_UPDATE_BOOK_ID_LIST_CACHE_NAME)
+    public List<Long> getLastUpdateIdList(Long categoryId) {
+
+        QueryWrapper<BookInfo> bookInfoQueryWrapper = new QueryWrapper<>();
+        bookInfoQueryWrapper.eq(DatabaseConsts.BookTable.COLUMN_CATEGORY_ID, categoryId)
+                .gt(DatabaseConsts.BookTable.COLUMN_WORD_COUNT,0)
+                .orderByDesc(DatabaseConsts.CommonColumnEnum.UPDATE_TIME.getName())
+                .last(DatabaseConsts.SqlEnum.LIMIT_500.getSql());
+
+        List<BookInfo> bookInfoList = bookInfoMapper.selectList(bookInfoQueryWrapper);
+
+        return bookInfoList.stream().map(BookInfo::getId).toList();
+
+    }
 }
