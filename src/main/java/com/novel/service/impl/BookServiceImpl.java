@@ -4,15 +4,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.novel.core.common.constant.DatabaseConsts;
 import com.novel.core.common.constant.ErrorCodeEnum;
 import com.novel.core.common.resp.RestResp;
-import com.novel.dao.entity.BookComment;
-import com.novel.dao.entity.BookInfo;
-import com.novel.dao.entity.UserInfo;
+import com.novel.dao.entity.*;
+import com.novel.dao.mapper.BookChapterMapper;
 import com.novel.dao.mapper.BookCommentMapper;
-import com.novel.dao.mapper.BookInfoMapper;
-import com.novel.dao.mapper.UserInfoMapper;
+import com.novel.dao.mapper.BookContentMapper;
 import com.novel.dto.req.UserCommentReqDto;
-import com.novel.dto.resp.BookCommentRespDto;
-import com.novel.dto.resp.BookRankRespDto;
+import com.novel.dto.resp.*;
+import com.novel.manager.BookChapterCacheManager;
+import com.novel.manager.BookContentCacheManager;
+import com.novel.manager.BookInfoCacheManager;
 import com.novel.manager.BookRankCacheManager;
 import com.novel.manager.dao.UserDaoManager;
 import com.novel.service.BookService;
@@ -38,6 +38,14 @@ public class BookServiceImpl implements BookService {
     private final UserDaoManager userDaoManager;
 
     private final BookRankCacheManager bookRankCacheManager;
+
+    private final BookInfoCacheManager bookInfoCacheManager;
+
+    private final BookChapterCacheManager bookChapterCacheManager;
+
+    private final BookContentCacheManager bookContentCacheManager;
+
+    private final BookChapterMapper bookChapterMapper;
 
 //    private final UserInfoMapper userInfoMapper;
 
@@ -140,6 +148,32 @@ public class BookServiceImpl implements BookService {
     @Override
     public RestResp<List<BookRankRespDto>> listUpdateRankBooks() {
         return RestResp.ok(bookRankCacheManager.listUpdateRankBooks());
+    }
+
+    @Override
+    public RestResp<BookInfoRespDto> getBookById(Long bookId) {
+
+        return RestResp.ok(bookInfoCacheManager.getBookInfo(bookId));
+    }
+
+    @Override
+    public RestResp<BookChapterAboutRespDto> getLastChapterAbout(Long bookId) {
+
+        BookInfoRespDto bookInfo = bookInfoCacheManager.getBookInfo(bookId);
+
+        BookChapterRespDto chapterInfo =bookChapterCacheManager.getChapter(bookInfo.getLastChapterId());
+
+        String content = bookContentCacheManager.getBookContent(bookInfo.getLastChapterId());
+
+        QueryWrapper<BookChapter> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(DatabaseConsts.BookChapterTable.COLUMN_BOOK_ID, bookId);
+        Long chapterTotal = bookChapterMapper.selectCount(queryWrapper);
+
+        return RestResp.ok(BookChapterAboutRespDto.builder()
+                .chapterInfo(chapterInfo)
+                .chapterTotal(chapterTotal)
+                .contentSummary(content.substring(0,30))
+                .build());
     }
 
 //    @Override

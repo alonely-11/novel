@@ -2,11 +2,14 @@ package com.novel.controller.front;
 
 import com.novel.core.common.constant.ApiRouterConsts;
 import com.novel.core.common.resp.RestResp;
+import com.novel.dto.resp.BookChapterAboutRespDto;
 import com.novel.dto.resp.BookCommentRespDto;
+import com.novel.dto.resp.BookInfoRespDto;
 import com.novel.dto.resp.BookRankRespDto;
 import com.novel.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,6 +40,16 @@ public class BookController {
     @GetMapping("update_rank")
     public RestResp<List<BookRankRespDto>> listUpdateRankBooks(){
         return bookService.listUpdateRankBooks();
+    }
+
+    @GetMapping("{id}")
+    public RestResp<BookInfoRespDto> getBookById(@PathVariable("id") Long bookId){
+        return bookService.getBookById(bookId);
+    }
+
+    @GetMapping("last_chapter/about")
+    public RestResp<BookChapterAboutRespDto> getLastChapterAbout(Long bookId){
+        return bookService.getLastChapterAbout(bookId);
     }
 
 }
