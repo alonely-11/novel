@@ -1,6 +1,8 @@
 package com.novel.core.auth;
 
+import lombok.Data;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 用户信息 持有类
@@ -8,7 +10,9 @@ import lombok.experimental.UtilityClass;
  * @author xiongxiaoyang
  * @date 2022/5/18
  */
+@Slf4j
 @UtilityClass
+@Data
 public class UserHolder {
 
     /**
@@ -22,6 +26,7 @@ public class UserHolder {
     private static final ThreadLocal<Long> authorIdTL = new ThreadLocal<>();
 
     public void setUserId(Long userId) {
+        log.info("==============用户id:{}======================", userId);
         userIdTL.set(userId);
     }
 
