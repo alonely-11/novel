@@ -1,7 +1,6 @@
 package com.novel.core.config;
 
 import com.novel.core.common.constant.ApiRouterConsts;
-import com.novel.core.common.constant.SystemConfigConsts;
 import com.novel.core.interceptor.AuthInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

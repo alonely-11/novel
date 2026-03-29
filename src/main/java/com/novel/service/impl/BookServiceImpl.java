@@ -8,6 +8,7 @@ import com.novel.dao.entity.*;
 import com.novel.dao.mapper.BookChapterMapper;
 import com.novel.dao.mapper.BookCommentMapper;
 import com.novel.dao.mapper.BookContentMapper;
+import com.novel.dao.mapper.BookInfoMapper;
 import com.novel.dto.req.UserCommentReqDto;
 import com.novel.dto.resp.*;
 import com.novel.manager.BookChapterCacheManager;
@@ -16,6 +17,7 @@ import com.novel.manager.BookInfoCacheManager;
 import com.novel.manager.BookRankCacheManager;
 import com.novel.manager.dao.UserDaoManager;
 import com.novel.service.BookService;
+import io.lettuce.core.dynamic.annotation.Key;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -50,7 +52,10 @@ public class BookServiceImpl implements BookService {
 
     private final BookChapterMapper bookChapterMapper;
 
+    private final BookInfoMapper bookInfoMapper;
+
 //    private final UserInfoMapper userInfoMapper;
+
 
     @Override
     public RestResp<Void> saveComment(UserCommentReqDto dto) {
