@@ -11,11 +11,14 @@ import com.novel.dao.entity.UserInfo;
 import com.novel.dao.mapper.UserInfoMapper;
 import com.novel.dto.req.UserLoginReqDto;
 import com.novel.dto.req.UserRegisterReqDto;
+import com.novel.dto.resp.UserInfoRespDto;
+import com.novel.dto.req.UserInfoUptReqDto;
 import com.novel.dto.resp.UserLoginRespDto;
 import com.novel.dto.resp.UserRegisterRespDto;
 import com.novel.manager.VerifyCodeManager;
 import com.novel.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -23,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -92,5 +96,36 @@ public class UserServiceImpl implements UserService {
                         .token(jwtUtils.generateToken(userInfo.getId(),SystemConfigConsts.NOVEL_FRONT_KEY))
                         .build()
         );
+    }
+
+    @Override
+    public RestResp<UserInfoRespDto> getUserInfo(Long userId) {
+
+        UserInfo userInfo = userInfoMapper.selectById(userId);
+
+        return RestResp.ok(UserInfoRespDto.builder()
+                .nickName(userInfo.getNickName())
+                .userPhoto(userInfo.getUserPhoto())
+                .userSex(userInfo.getUserSex())
+                .build());
+    }
+
+    @Override
+    public RestResp<Void> updateUserInfo(UserInfoUptReqDto dto) {
+
+        log.info("用户更新信息：{}",dto.toString());
+
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(dto.getUserId());
+        userInfo.setNickName(dto.getNickName());
+        userInfo.setUserPhoto(dto.getUserPhoto());
+        userInfo.setUserSex(dto.getUserSex());
+        userInfo.setUpdateTime(LocalDateTime.now());
+
+        log.info("用户信息：{}", userInfo);
+
+        userInfoMapper.updateById(userInfo);
+
+        return RestResp.ok();
     }
 }

@@ -223,6 +223,14 @@ public class BookServiceImpl implements BookService {
         return RestResp.ok(respDtoList);
     }
 
+    @Override
+    public RestResp<Integer> getBookshelfStatus(String bookId) {
+
+        //占位
+
+        return null;
+    }
+
 //    @Override
 //    public RestResp<BookCommentRespDto> listNewestComment(Long bookId) {
 //

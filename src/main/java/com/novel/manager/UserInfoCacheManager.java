@@ -1,7 +1,5 @@
 package com.novel.manager;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.novel.core.common.constant.DatabaseConsts;
 import com.novel.core.constant.CacheConsts;
 import com.novel.dao.entity.UserInfo;
 import com.novel.dao.mapper.UserInfoMapper;

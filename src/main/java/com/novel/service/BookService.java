@@ -31,4 +31,6 @@ public interface BookService {
     RestResp<BookChapterAboutRespDto> getLastChapterAbout(Long bookId);
 
     RestResp<List<BookInfoRespDto>> listRecBooks(Long bookId) throws NoSuchAlgorithmException;
+
+    RestResp<Integer> getBookshelfStatus(String bookId);
 }

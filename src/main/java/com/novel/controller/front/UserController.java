@@ -4,8 +4,10 @@ import com.novel.core.auth.UserHolder;
 import com.novel.core.common.constant.ApiRouterConsts;
 import com.novel.core.common.resp.RestResp;
 import com.novel.dto.req.UserCommentReqDto;
+import com.novel.dto.req.UserInfoUptReqDto;
 import com.novel.dto.req.UserLoginReqDto;
 import com.novel.dto.req.UserRegisterReqDto;
+import com.novel.dto.resp.UserInfoRespDto;
 import com.novel.dto.resp.UserLoginRespDto;
 import com.novel.dto.resp.UserRegisterRespDto;
 import com.novel.service.BookService;
@@ -75,6 +77,22 @@ public class UserController {
     @DeleteMapping("comment/{id}")
     public RestResp<Void> deleteComment(@PathVariable Long id){
         return bookService.deleteComment(UserHolder.getUserId(),id);
+    }
+
+    @GetMapping
+    public RestResp<UserInfoRespDto> getUserInfo(){
+        return userService.getUserInfo(UserHolder.getUserId());
+    }
+
+    @PutMapping
+    public RestResp<Void> updateUserInfo(@Valid @RequestBody UserInfoUptReqDto dto) {
+        dto.setUserId(UserHolder.getUserId());
+        return userService.updateUserInfo(dto);
+    }
+
+    @GetMapping("bookshelf_status")
+    public RestResp<Integer> getBookshelfStatus(String bookId){
+        return bookService.getBookshelfStatus(bookId);
     }
 
 }
