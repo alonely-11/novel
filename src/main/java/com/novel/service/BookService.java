@@ -32,5 +32,5 @@ public interface BookService {
 
     RestResp<List<BookInfoRespDto>> listRecBooks(Long bookId) throws NoSuchAlgorithmException;
 
-    RestResp<Integer> getBookshelfStatus(String bookId);
+    RestResp<Integer> getBookshelfStatus(String bookId, Long userId);
 }

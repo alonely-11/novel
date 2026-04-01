@@ -92,7 +92,7 @@ public class UserController {
 
     @GetMapping("bookshelf_status")
     public RestResp<Integer> getBookshelfStatus(String bookId){
-        return bookService.getBookshelfStatus(bookId);
+        return bookService.getBookshelfStatus(bookId,UserHolder.getUserId());
     }
 
 }

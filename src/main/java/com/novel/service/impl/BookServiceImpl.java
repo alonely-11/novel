@@ -1,14 +1,12 @@
 package com.novel.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.novel.core.common.constant.CommonConsts;
 import com.novel.core.common.constant.DatabaseConsts;
 import com.novel.core.common.constant.ErrorCodeEnum;
 import com.novel.core.common.resp.RestResp;
 import com.novel.dao.entity.*;
-import com.novel.dao.mapper.BookChapterMapper;
-import com.novel.dao.mapper.BookCommentMapper;
-import com.novel.dao.mapper.BookContentMapper;
-import com.novel.dao.mapper.BookInfoMapper;
+import com.novel.dao.mapper.*;
 import com.novel.dto.req.UserCommentReqDto;
 import com.novel.dto.resp.*;
 import com.novel.manager.BookChapterCacheManager;
@@ -52,7 +50,7 @@ public class BookServiceImpl implements BookService {
 
     private final BookChapterMapper bookChapterMapper;
 
-    private final BookInfoMapper bookInfoMapper;
+    private final UserBookshelfMapper userBookshelfMapper;
 
 //    private final UserInfoMapper userInfoMapper;
 
@@ -224,12 +222,17 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public RestResp<Integer> getBookshelfStatus(String bookId) {
+    public RestResp<Integer> getBookshelfStatus(String bookId, Long userId) {
 
-        //占位
+        QueryWrapper<UserBookshelf>  queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(DatabaseConsts.UserBookshelfTable.COLUMN_BOOK_ID, bookId)
+                .eq(DatabaseConsts.UserBookshelfTable.COLUMN_USER_ID,userId);
 
-        return null;
+        return RestResp.ok(
+                userBookshelfMapper.selectCount(queryWrapper)>0?
+                        CommonConsts.YES:CommonConsts.NO);
     }
+
 
 //    @Override
 //    public RestResp<BookCommentRespDto> listNewestComment(Long bookId) {
