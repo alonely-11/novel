@@ -29,4 +29,8 @@ public interface UserService {
     RestResp<UserInfoRespDto> getUserInfo(Long userId);
 
     RestResp<Void> updateUserInfo(UserInfoUptReqDto dto);
+
+    RestResp<Void> saveFeedback(Long userId, String content);
+
+    RestResp<Void> deleteFeedback(Long userId, Long id);
 }

@@ -18,7 +18,6 @@ import com.novel.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -102,6 +101,16 @@ public class UserController {
     @GetMapping("comments")
     public RestResp<PageRespDto<UserCommentRespDto>> listComments(PageReqDto pageReqDto){
         return bookService.listComments(UserHolder.getUserId(),pageReqDto);
+    }
+
+    @PostMapping("feedback")
+    public RestResp<Void> submitFeedback(@RequestBody String content){
+        return userService.saveFeedback(UserHolder.getUserId(),content);
+    }
+
+    @DeleteMapping("feedback/{id}")
+    public RestResp<Void> deleteFeedback(@PathVariable Long id){
+        return userService.deleteFeedback(UserHolder.getUserId(),id);
     }
 
 }

@@ -7,7 +7,9 @@ import com.novel.core.common.constant.SystemConfigConsts;
 import com.novel.core.common.exception.BusinessException;
 import com.novel.core.common.resp.RestResp;
 import com.novel.core.util.JwtUtils;
+import com.novel.dao.entity.UserFeedback;
 import com.novel.dao.entity.UserInfo;
+import com.novel.dao.mapper.UserFeedbackMapper;
 import com.novel.dao.mapper.UserInfoMapper;
 import com.novel.dto.req.UserLoginReqDto;
 import com.novel.dto.req.UserRegisterReqDto;
@@ -36,6 +38,8 @@ public class UserServiceImpl implements UserService {
     private final UserInfoMapper userInfoMapper;
 
     private final JwtUtils jwtUtils;
+
+    private final UserFeedbackMapper userFeedbackMapper;
 
     @Override
     public RestResp<UserRegisterRespDto> register(UserRegisterReqDto dto) {
@@ -125,6 +129,32 @@ public class UserServiceImpl implements UserService {
         log.info("用户信息：{}", userInfo);
 
         userInfoMapper.updateById(userInfo);
+
+        return RestResp.ok();
+    }
+
+    @Override
+    public RestResp<Void> saveFeedback(Long userId, String content) {
+
+        UserFeedback userFeedback = new UserFeedback();
+        userFeedback.setUserId(userId);
+        userFeedback.setContent(content);
+        userFeedback.setCreateTime(LocalDateTime.now());
+        userFeedback.setUpdateTime(LocalDateTime.now());
+
+        userFeedbackMapper.insert(userFeedback);
+
+        return RestResp.ok();
+    }
+
+    @Override
+    public RestResp<Void> deleteFeedback(Long userId, Long id) {
+
+        QueryWrapper<UserFeedback> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(DatabaseConsts.CommonColumnEnum.ID.getName(), id)
+                        .eq(DatabaseConsts.UserFeedBackTable.COLUMN_USER_ID, userId);
+
+        userFeedbackMapper.delete(queryWrapper);
 
         return RestResp.ok();
     }
