@@ -21,6 +21,7 @@ import com.novel.manager.dao.UserDaoManager;
 import com.novel.service.BookService;
 import io.lettuce.core.dynamic.annotation.Key;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 /**
  * @author LC
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
@@ -280,6 +282,16 @@ public class BookServiceImpl implements BookService {
                 pageReqDto.getPageSize(),
                 page.getTotal(),
                 userCommentRespDtoList));
+    }
+
+    @Override
+    public RestResp<Void> addVisitCount(Long bookId) {
+
+        bookInfoMapper.addVisitCount(bookId);
+
+        bookInfoCacheManager.evictBookInfo(bookId);
+
+        return RestResp.ok();
     }
 
 //    @Override

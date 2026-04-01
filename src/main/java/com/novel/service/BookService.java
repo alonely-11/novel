@@ -34,4 +34,6 @@ public interface BookService {
     RestResp<Integer> getBookshelfStatus(String bookId, Long userId);
 
     RestResp<PageRespDto<UserCommentRespDto>> listComments(Long userId, PageReqDto pageReqDto);
+
+    RestResp<Void> addVisitCount(Long bookId);
 }
