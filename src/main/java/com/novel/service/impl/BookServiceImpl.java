@@ -1,9 +1,13 @@
 package com.novel.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.novel.core.common.constant.CommonConsts;
 import com.novel.core.common.constant.DatabaseConsts;
 import com.novel.core.common.constant.ErrorCodeEnum;
+import com.novel.core.common.req.PageReqDto;
+import com.novel.core.common.resp.PageRespDto;
 import com.novel.core.common.resp.RestResp;
 import com.novel.dao.entity.*;
 import com.novel.dao.mapper.*;
@@ -51,6 +55,8 @@ public class BookServiceImpl implements BookService {
     private final BookChapterMapper bookChapterMapper;
 
     private final UserBookshelfMapper userBookshelfMapper;
+
+    private final BookInfoMapper bookInfoMapper;
 
 //    private final UserInfoMapper userInfoMapper;
 
@@ -233,6 +239,48 @@ public class BookServiceImpl implements BookService {
                         CommonConsts.YES:CommonConsts.NO);
     }
 
+    @Override
+    public RestResp<PageRespDto<UserCommentRespDto>> listComments(Long userId, PageReqDto pageReqDto) {
+
+//        QueryWrapper<BookComment> queryWrapperCount = new QueryWrapper<>();
+//        queryWrapperCount.eq(DatabaseConsts.UserBookshelfTable.COLUMN_USER_ID,userId);
+//        Long total =  bookCommentMapper.selectCount(queryWrapperCount);
+//
+//        QueryWrapper<BookComment> queryWrapperBC = new QueryWrapper<>();
+//        queryWrapperBC.eq(DatabaseConsts.UserBookshelfTable.COLUMN_USER_ID,userId);
+//        List<BookComment> bookCommentList = bookCommentMapper.selectList(queryWrapperBC);
+
+        IPage<BookComment> page = new Page<>();
+        page.setCurrent(pageReqDto.getPageNum());
+        page.setSize(pageReqDto.getPageSize());
+        QueryWrapper<BookComment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(DatabaseConsts.BookCommentTable.COLUMN_USER_ID, userId)
+                .orderByDesc(DatabaseConsts.CommonColumnEnum.UPDATE_TIME.getName());
+        IPage<BookComment> bookCommentIPage = bookCommentMapper.selectPage(page, queryWrapper);
+        List<BookComment> bookCommentList = bookCommentIPage.getRecords();
+
+        List<UserCommentRespDto> userCommentRespDtoList = Collections.emptyList();
+        if (!CollectionUtils.isEmpty(bookCommentList)) {
+            QueryWrapper<BookInfo> queryWrapperBI = new QueryWrapper<>();
+            List<Long> ids = bookCommentList.stream().map(BookComment::getBookId).toList();
+            queryWrapperBI.in(DatabaseConsts.CommonColumnEnum.ID.getName(),ids);
+            List<BookInfo> bookInfoList = bookInfoMapper.selectList(queryWrapperBI);
+            Map<Long,BookInfo> map = bookInfoList.stream().collect(Collectors.toMap(BookInfo::getId,Function.identity()));
+            userCommentRespDtoList = bookCommentList.stream().map(v->
+                    UserCommentRespDto.builder()
+                            .commentContent(v.getCommentContent())
+                            .commentBookPic(map.get(v.getBookId())!=null?map.get(v.getBookId()).getPicUrl():null)
+                            .commentBook(map.get(v.getBookId())!=null?map.get(v.getBookId()).getBookName():null)
+                            .commentTime(v.getCreateTime())
+                            .build()
+            ).toList();
+        }
+        return RestResp.ok(PageRespDto.of(
+                pageReqDto.getPageNum(),
+                pageReqDto.getPageSize(),
+                page.getTotal(),
+                userCommentRespDtoList));
+    }
 
 //    @Override
 //    public RestResp<BookCommentRespDto> listNewestComment(Long bookId) {

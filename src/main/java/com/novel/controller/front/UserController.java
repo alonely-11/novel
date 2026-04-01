@@ -2,11 +2,14 @@ package com.novel.controller.front;
 
 import com.novel.core.auth.UserHolder;
 import com.novel.core.common.constant.ApiRouterConsts;
+import com.novel.core.common.req.PageReqDto;
+import com.novel.core.common.resp.PageRespDto;
 import com.novel.core.common.resp.RestResp;
 import com.novel.dto.req.UserCommentReqDto;
 import com.novel.dto.req.UserInfoUptReqDto;
 import com.novel.dto.req.UserLoginReqDto;
 import com.novel.dto.req.UserRegisterReqDto;
+import com.novel.dto.resp.UserCommentRespDto;
 import com.novel.dto.resp.UserInfoRespDto;
 import com.novel.dto.resp.UserLoginRespDto;
 import com.novel.dto.resp.UserRegisterRespDto;
@@ -15,6 +18,7 @@ import com.novel.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -93,6 +97,11 @@ public class UserController {
     @GetMapping("bookshelf_status")
     public RestResp<Integer> getBookshelfStatus(String bookId){
         return bookService.getBookshelfStatus(bookId,UserHolder.getUserId());
+    }
+
+    @GetMapping("comments")
+    public RestResp<PageRespDto<UserCommentRespDto>> listComments(PageReqDto pageReqDto){
+        return bookService.listComments(UserHolder.getUserId(),pageReqDto);
     }
 
 }
