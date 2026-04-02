@@ -2,10 +2,8 @@ package com.novel.controller.front;
 
 import com.novel.core.common.constant.ApiRouterConsts;
 import com.novel.core.common.resp.RestResp;
-import com.novel.dto.resp.BookChapterAboutRespDto;
-import com.novel.dto.resp.BookCommentRespDto;
-import com.novel.dto.resp.BookInfoRespDto;
-import com.novel.dto.resp.BookRankRespDto;
+import com.novel.dao.entity.BookCategory;
+import com.novel.dto.resp.*;
 import com.novel.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +56,31 @@ public class BookController {
     @PostMapping("visit")
     public RestResp<Void> addVisitCount(Long bookId){
         return bookService.addVisitCount(bookId);
+    }
+
+    @GetMapping("pre_chapter_id/{chapterId}")
+    public RestResp<Long> getPreChapterId(@PathVariable Long chapterId){
+        return bookService.getPreChapterId(chapterId);
+    }
+
+    @GetMapping("next_chapter_id/{chapterId}")
+    public RestResp<Long> getNextChapterId(@PathVariable Long chapterId){
+        return bookService.getNextChapterId(chapterId);
+    }
+
+    @GetMapping("chapter/list")
+    public RestResp<List<BookChapterRespDto>> listChapters(Long bookId){
+        return bookService.listChapters(bookId);
+    }
+
+    @GetMapping("category/list")
+    public RestResp<List<BookCategoryRespDto>> listCategory(Integer workDirection){
+        return bookService.listCategory(workDirection);
+    }
+
+    @GetMapping("content/{chapterId}")
+    public RestResp<BookChapterContentRespDto> getChapterContentAbout(@PathVariable Long chapterId){
+        return bookService.getChapterContentAbout(chapterId);
     }
 
 }

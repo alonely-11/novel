@@ -36,4 +36,14 @@ public interface BookService {
     RestResp<PageRespDto<UserCommentRespDto>> listComments(Long userId, PageReqDto pageReqDto);
 
     RestResp<Void> addVisitCount(Long bookId);
+
+    RestResp<Long> getPreChapterId(Long chapterId);
+
+    RestResp<Long> getNextChapterId(Long chapterId);
+
+    RestResp<List<BookChapterRespDto>> listChapters(Long bookId);
+
+    RestResp<List<BookCategoryRespDto>> listCategory(Integer workDirection);
+
+    RestResp<BookChapterContentRespDto> getChapterContentAbout(Long chapterId);
 }

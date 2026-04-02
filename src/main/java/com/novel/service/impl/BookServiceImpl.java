@@ -3,6 +3,7 @@ package com.novel.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.novel.core.auth.UserHolder;
 import com.novel.core.common.constant.CommonConsts;
 import com.novel.core.common.constant.DatabaseConsts;
 import com.novel.core.common.constant.ErrorCodeEnum;
@@ -13,18 +14,15 @@ import com.novel.dao.entity.*;
 import com.novel.dao.mapper.*;
 import com.novel.dto.req.UserCommentReqDto;
 import com.novel.dto.resp.*;
-import com.novel.manager.BookChapterCacheManager;
-import com.novel.manager.BookContentCacheManager;
-import com.novel.manager.BookInfoCacheManager;
-import com.novel.manager.BookRankCacheManager;
+import com.novel.manager.*;
 import com.novel.manager.dao.UserDaoManager;
 import com.novel.service.BookService;
-import io.lettuce.core.dynamic.annotation.Key;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.awt.print.Book;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -59,6 +57,8 @@ public class BookServiceImpl implements BookService {
     private final UserBookshelfMapper userBookshelfMapper;
 
     private final BookInfoMapper bookInfoMapper;
+
+    private final BookCategoryCacheManager bookCategoryCacheMapper;
 
 //    private final UserInfoMapper userInfoMapper;
 
@@ -292,6 +292,96 @@ public class BookServiceImpl implements BookService {
         bookInfoCacheManager.evictBookInfo(bookId);
 
         return RestResp.ok();
+    }
+
+    @Override
+    public RestResp<Long> getPreChapterId(Long chapterId) {
+
+        BookChapterRespDto chapter = bookChapterCacheManager.getChapter(chapterId);
+
+        Long bookId = chapter.getBookId();
+        Integer chapterNum = chapter.getChapterNum();
+
+        QueryWrapper<BookChapter> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(DatabaseConsts.BookChapterTable.COLUMN_BOOK_ID, bookId)
+                .lt(DatabaseConsts.BookChapterTable.COLUMN_CHAPTER_NUM, chapterNum)
+                .orderByDesc(DatabaseConsts.BookChapterTable.COLUMN_CHAPTER_NUM)
+                .last(DatabaseConsts.SqlEnum.LIMIT_1.getSql());
+
+        return RestResp.ok(
+                Optional.ofNullable(bookChapterMapper.selectOne(queryWrapper))
+                        .map(BookChapter::getId)
+                        .orElse(null)
+        );
+    }
+
+    @Override
+    public RestResp<Long> getNextChapterId(Long chapterId) {
+
+        BookChapterRespDto chapter = bookChapterCacheManager.getChapter(chapterId);
+
+        Long bookId = chapter.getBookId();
+        Integer chapterNum = chapter.getChapterNum();
+
+        QueryWrapper<BookChapter> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(DatabaseConsts.BookChapterTable.COLUMN_BOOK_ID, bookId)
+                .gt(DatabaseConsts.BookChapterTable.COLUMN_CHAPTER_NUM, chapterNum)
+                .orderByAsc(DatabaseConsts.BookChapterTable.COLUMN_CHAPTER_NUM)
+                .last(DatabaseConsts.SqlEnum.LIMIT_1.getSql());
+
+        return RestResp.ok(
+                Optional.ofNullable(bookChapterMapper.selectOne(queryWrapper))
+                        .map(BookChapter::getId)
+                        .orElse(null)
+        );
+    }
+
+    @Override
+    public RestResp<List<BookChapterRespDto>> listChapters(Long bookId) {
+
+        QueryWrapper<BookChapter> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(DatabaseConsts.BookChapterTable.COLUMN_BOOK_ID, bookId)
+                .orderByAsc(DatabaseConsts.BookChapterTable.COLUMN_CHAPTER_NUM);
+
+        return RestResp.ok(bookChapterMapper.selectList(queryWrapper).stream()
+                .map(v -> BookChapterRespDto.builder()
+                        .id(v.getId())
+                        .chapterName(v.getChapterName())
+                        .isVip(v.getIsVip())
+                        .build()).toList());
+
+//        List<BookChapter> bookChapterList = bookChapterMapper.selectList(queryWrapper);
+//
+//        List<BookChapterRespDto> chapters = bookChapterList.stream().map(v->
+//                bookChapterCacheManager.getChapter(v.getId())
+//                ).toList();
+//
+//        return RestResp.ok(chapters);
+    }
+
+    @Override
+    public RestResp<List<BookCategoryRespDto>> listCategory(Integer workDirection) {
+        return RestResp.ok(bookCategoryCacheMapper.listCategory(workDirection));
+    }
+
+    @Override
+    public RestResp<BookChapterContentRespDto> getChapterContentAbout(Long chapterId) {
+
+        log.debug("userId:{}", UserHolder.getUserId());
+
+        BookChapterRespDto chapter = bookChapterCacheManager.getChapter(chapterId);
+
+        String content = bookContentCacheManager.getBookContent(chapterId);
+
+        BookInfoRespDto bookInfo = bookInfoCacheManager.getBookInfo(chapter.getBookId());
+
+        return RestResp.ok(
+                BookChapterContentRespDto.builder()
+                        .bookInfo(bookInfo)
+                        .chapterInfo(chapter)
+                        .bookContent(content)
+                        .build()
+        );
     }
 
 //    @Override
