@@ -20,8 +20,8 @@ public class AuthorInfoCacheManager {
 
     private final AuthorInfoMapper authorInfoMapper;
 
-    @Cacheable(cacheManager = CacheConsts.CAFFEINE_CACHE_MANAGER,
-            value = CacheConsts.AUTHOR_INFO_CACHE_NAME)
+    @Cacheable(cacheManager = CacheConsts.REDIS_CACHE_MANAGER,
+            value = CacheConsts.AUTHOR_INFO_CACHE_NAME, unless = "#result == null")
     public AuthorInfoDto getAuthor(Long userId){
 
         QueryWrapper<AuthorInfo> queryWrapper = new QueryWrapper<>();

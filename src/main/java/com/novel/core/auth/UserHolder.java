@@ -26,7 +26,6 @@ public class UserHolder {
     private static final ThreadLocal<Long> authorIdTL = new ThreadLocal<>();
 
     public void setUserId(Long userId) {
-        log.info("==============用户id:{}======================", userId);
         userIdTL.set(userId);
     }
 

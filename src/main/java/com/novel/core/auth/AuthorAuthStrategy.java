@@ -18,9 +18,9 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class AuthorAuthStrategy implements AuthStrategy {
 
-    private JwtUtils jwtUtils;
-    private UserInfoCacheManager userInfoCacheManager;
-    private AuthorInfoCacheManager authorInfoCacheManager;
+    private final JwtUtils jwtUtils;
+    private final UserInfoCacheManager userInfoCacheManager;
+    private final AuthorInfoCacheManager authorInfoCacheManager;
 
     private static final List<String> EXCLUDE_URI = List.of(
             ApiRouterConsts.API_AUTHOR_URL_PREFIX + "/register",
@@ -42,7 +42,7 @@ public class AuthorAuthStrategy implements AuthStrategy {
             throw new BusinessException(ErrorCodeEnum.USER_UN_AUTH);
         }
 
-        UserHolder.setUserId(authorInfo.getId());
+        UserHolder.setAuthorId(authorInfo.getId());
 
     }
 }

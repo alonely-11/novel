@@ -3,8 +3,10 @@ package com.novel.service;
 import com.novel.core.common.req.PageReqDto;
 import com.novel.core.common.resp.PageRespDto;
 import com.novel.core.common.resp.RestResp;
+import com.novel.dto.req.ChapterUpdateReqDto;
 import com.novel.dto.req.UserCommentReqDto;
 import com.novel.dto.resp.*;
+import jakarta.validation.Valid;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -46,4 +48,8 @@ public interface BookService {
     RestResp<List<BookCategoryRespDto>> listCategory(Integer workDirection);
 
     RestResp<BookChapterContentRespDto> getChapterContentAbout(Long chapterId);
+
+    RestResp<ChapterContentRespDto> getBookChapter(Long chapterId);
+
+    RestResp<Void> updateBookChapter(Long chapterId, @Valid ChapterUpdateReqDto dto);
 }

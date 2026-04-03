@@ -12,6 +12,7 @@ import com.novel.core.common.resp.PageRespDto;
 import com.novel.core.common.resp.RestResp;
 import com.novel.dao.entity.*;
 import com.novel.dao.mapper.*;
+import com.novel.dto.req.ChapterUpdateReqDto;
 import com.novel.dto.req.UserCommentReqDto;
 import com.novel.dto.resp.*;
 import com.novel.manager.*;
@@ -59,6 +60,7 @@ public class BookServiceImpl implements BookService {
     private final BookInfoMapper bookInfoMapper;
 
     private final BookCategoryCacheManager bookCategoryCacheMapper;
+    private final BookContentMapper bookContentMapper;
 
 //    private final UserInfoMapper userInfoMapper;
 
@@ -382,6 +384,36 @@ public class BookServiceImpl implements BookService {
                         .bookContent(content)
                         .build()
         );
+    }
+
+    @Override
+    public RestResp<ChapterContentRespDto> getBookChapter(Long chapterId) {
+
+        BookChapterRespDto chapter =bookChapterCacheManager.getChapter(chapterId);
+        String chapterName = chapter.getChapterName();
+        String content = bookContentCacheManager.getBookContent(chapterId);
+        Integer isVip = chapter.getIsVip();
+
+        return RestResp.ok(ChapterContentRespDto.builder()
+                .chapterName(chapterName)
+                .chapterContent(content)
+                .isVip(isVip)
+                .build());
+    }
+
+    @Override
+    public RestResp<Void> updateBookChapter(Long chapterId, ChapterUpdateReqDto dto) {
+
+        BookChapter chapter = bookChapterMapper.selectById(chapterId);
+        chapter.setChapterName(dto.getChapterName());
+        chapter.setIsVip(dto.getIsVip());
+        bookChapterMapper.updateById(chapter);
+        QueryWrapper<BookContent> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(DatabaseConsts.BookContentTable.COLUMN_CHAPTER_ID, chapterId);
+        BookContent bookContent = bookContentMapper.selectOne(queryWrapper);
+        bookContent.setContent(dto.getChapterContent());
+        bookContentMapper.updateById(bookContent);
+        return RestResp.ok();
     }
 
 //    @Override
