@@ -70,7 +70,7 @@ public class BookInfoCacheManager {
 
     @CacheEvict(cacheManager = CacheConsts.CAFFEINE_CACHE_MANAGER,
             value = CacheConsts.BOOK_INFO_CACHE_NAME)
-    public void evictBookInfo(Long bookId) {
+    public void evictBookInfoCache(Long bookId) {
         //调用此方法自动清除小说信息缓存
     }
 

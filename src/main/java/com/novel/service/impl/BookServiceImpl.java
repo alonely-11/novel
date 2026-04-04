@@ -17,10 +17,12 @@ import com.novel.dto.req.UserCommentReqDto;
 import com.novel.dto.resp.*;
 import com.novel.manager.*;
 import com.novel.manager.dao.UserDaoManager;
+import com.novel.manager.mq.AmqpMsgManager;
 import com.novel.service.BookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.awt.print.Book;
@@ -60,7 +62,10 @@ public class BookServiceImpl implements BookService {
     private final BookInfoMapper bookInfoMapper;
 
     private final BookCategoryCacheManager bookCategoryCacheMapper;
+
     private final BookContentMapper bookContentMapper;
+
+    private final AmqpMsgManager amqpMsgManager;
 
 //    private final UserInfoMapper userInfoMapper;
 
@@ -291,7 +296,7 @@ public class BookServiceImpl implements BookService {
 
         bookInfoMapper.addVisitCount(bookId);
 
-        bookInfoCacheManager.evictBookInfo(bookId);
+        bookInfoCacheManager.evictBookInfoCache(bookId);
 
         return RestResp.ok();
     }
@@ -401,18 +406,55 @@ public class BookServiceImpl implements BookService {
                 .build());
     }
 
+    @Transactional
     @Override
     public RestResp<Void> updateBookChapter(Long chapterId, ChapterUpdateReqDto dto) {
 
-        BookChapter chapter = bookChapterMapper.selectById(chapterId);
-        chapter.setChapterName(dto.getChapterName());
-        chapter.setIsVip(dto.getIsVip());
-        bookChapterMapper.updateById(chapter);
-        QueryWrapper<BookContent> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(DatabaseConsts.BookContentTable.COLUMN_CHAPTER_ID, chapterId);
-        BookContent bookContent = bookContentMapper.selectOne(queryWrapper);
-        bookContent.setContent(dto.getChapterContent());
-        bookContentMapper.updateById(bookContent);
+        //获取小说章节
+        BookChapterRespDto chapter = bookChapterCacheManager.getChapter(chapterId);
+        //获取小说信息
+        BookInfoRespDto bookInfo = bookInfoCacheManager.getBookInfo(chapter.getBookId());
+
+        //更新章节信息
+        BookChapter newChapter = new BookChapter();
+        newChapter.setId(chapterId);
+        newChapter.setChapterName(dto.getChapterName());
+        newChapter.setWordCount(dto.getChapterContent().length());
+        newChapter.setIsVip(dto.getIsVip());
+        newChapter.setUpdateTime(LocalDateTime.now());
+        bookChapterMapper.updateById(newChapter);
+
+        //更新小说信息
+        BookInfo newBookInfo = new BookInfo();
+        newBookInfo.setId(chapter.getBookId());
+        if (Objects.equals(bookInfo.getLastChapterId(), chapterId)){
+            newBookInfo.setLastChapterName(chapter.getChapterName());
+            newBookInfo.setLastChapterUpdateTime(LocalDateTime.now());
+        }
+        newBookInfo.setWordCount(bookInfo.getWordCount()
+                -chapter.getChapterWordCount()
+                +dto.getChapterContent().length());
+        newBookInfo.setUpdateTime(LocalDateTime.now());
+        bookInfoMapper.updateById(newBookInfo);
+        //更新章节内容
+        BookContent newBookContent = new BookContent();
+        newBookContent.setContent(dto.getChapterContent());
+        newBookContent.setUpdateTime(LocalDateTime.now());
+        QueryWrapper<BookContent> bookContentQueryWrapper = new QueryWrapper<>();
+        bookContentQueryWrapper.eq(DatabaseConsts.BookContentTable.COLUMN_CHAPTER_ID, chapterId);
+        bookContentMapper.update(newBookContent, bookContentQueryWrapper);
+//        QueryWrapper<BookContent> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.eq(DatabaseConsts.BookContentTable.COLUMN_CHAPTER_ID, chapterId);
+//        BookContent bookContent = bookContentMapper.selectOne(queryWrapper);
+//        bookContent.setContent(dto.getChapterContent());
+//        bookContent.setUpdateTime(LocalDateTime.now());
+//        bookContentMapper.updateById(bookContent);
+        bookInfoCacheManager.evictBookInfoCache(chapter.getBookId());
+        bookChapterCacheManager.evictBookChapterCache(chapterId);
+        bookContentCacheManager.evictBookContentCache(chapterId);
+
+        amqpMsgManager.sendBookChangeMsg(chapter.getBookId());
+
         return RestResp.ok();
     }
 
