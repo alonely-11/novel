@@ -7,8 +7,10 @@ import com.novel.service.ResourceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -23,6 +25,11 @@ public class ResourceController {
     @GetMapping("img_verify_code")
     public RestResp<ImgVerifyCodeRespDto> getImgVerifyCode() throws IOException {
         return resourceService.getImgVerifyCode();
+    }
+
+    @PostMapping("image")
+    public RestResp<String> uploadImage(MultipartFile file) throws IOException {
+        return resourceService.uploadImage(file);
     }
 
 }

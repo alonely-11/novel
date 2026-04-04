@@ -242,7 +242,11 @@ novel:
     upload:
       # 上传路径
       path: /Users/xiongxiaoyang/upload
-
+  qiniu:
+    access-key: U4dA0ldIPwsRiYPAsAtey6vuMjVl234zlbTpVHHg
+    secret-key: _SjqnGojFyNPT1GFSEzcT0C-Nyw1EWYTd9EJZ5rQ
+    bucket-name: novel-ai
+    referring-domain: tcyrvnlul.hn-bkt.clouddn.com
 
 --- #------------------- dev 特定配置---------------------------
 spring:
