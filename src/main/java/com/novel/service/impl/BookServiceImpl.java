@@ -458,6 +458,30 @@ public class BookServiceImpl implements BookService {
         return RestResp.ok();
     }
 
+    @Override
+    public RestResp<Void> deleteBookChapter(Long chapterId) {
+
+        BookChapterRespDto chapter = bookChapterCacheManager.getChapter(chapterId);
+        BookInfoRespDto bookInfo = bookInfoCacheManager.getBookInfo(chapter.getBookId());
+        if (Objects.equals(bookInfo.getLastChapterId(), chapterId)){
+            BookInfo newBookInfo = new BookInfo();
+
+            newBookInfo.setId(chapter.getBookId());
+
+            bookInfoMapper.updateById(newBookInfo);
+        }
+
+        bookChapterMapper.deleteById(chapterId);
+        QueryWrapper<BookContent> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq(DatabaseConsts.BookContentTable.COLUMN_CHAPTER_ID, chapterId);
+        bookContentMapper.delete(queryWrapper);
+
+        bookChapterCacheManager.evictBookChapterCache(chapterId);
+        bookContentCacheManager.evictBookContentCache(chapterId);
+
+        return RestResp.ok();
+    }
+
 //    @Override
 //    public RestResp<BookCommentRespDto> listNewestComment(Long bookId) {
 //
