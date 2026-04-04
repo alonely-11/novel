@@ -428,7 +428,7 @@ public class BookServiceImpl implements BookService {
         BookInfo newBookInfo = new BookInfo();
         newBookInfo.setId(chapter.getBookId());
         if (Objects.equals(bookInfo.getLastChapterId(), chapterId)){
-            newBookInfo.setLastChapterName(chapter.getChapterName());
+            newBookInfo.setLastChapterName(dto.getChapterName());
             newBookInfo.setLastChapterUpdateTime(LocalDateTime.now());
         }
         newBookInfo.setWordCount(bookInfo.getWordCount()
