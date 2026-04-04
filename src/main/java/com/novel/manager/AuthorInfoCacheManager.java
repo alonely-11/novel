@@ -40,7 +40,7 @@ public class AuthorInfoCacheManager {
 
     }
 
-    @CacheEvict(cacheManager = CacheConsts.CAFFEINE_CACHE_MANAGER,
+    @CacheEvict(cacheManager = CacheConsts.REDIS_CACHE_MANAGER,
             value = CacheConsts.AUTHOR_INFO_CACHE_NAME)
     public void exictAuthorCache(){
     }
