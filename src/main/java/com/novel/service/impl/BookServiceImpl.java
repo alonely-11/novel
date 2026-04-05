@@ -458,26 +458,49 @@ public class BookServiceImpl implements BookService {
         return RestResp.ok();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public RestResp<Void> deleteBookChapter(Long chapterId) {
 
+        //被删除章节（缓存里）
         BookChapterRespDto chapter = bookChapterCacheManager.getChapter(chapterId);
+        //小说信息（缓存里）
         BookInfoRespDto bookInfo = bookInfoCacheManager.getBookInfo(chapter.getBookId());
-        if (Objects.equals(bookInfo.getLastChapterId(), chapterId)){
-            BookInfo newBookInfo = new BookInfo();
 
-            newBookInfo.setId(chapter.getBookId());
-
-            bookInfoMapper.updateById(newBookInfo);
-        }
-
+        QueryWrapper<BookContent> bookContentQueryWrapper = new QueryWrapper<>();
+        bookContentQueryWrapper.eq(DatabaseConsts.BookContentTable.COLUMN_CHAPTER_ID, chapterId);
+        bookContentMapper.delete(bookContentQueryWrapper);
         bookChapterMapper.deleteById(chapterId);
-        QueryWrapper<BookContent> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq(DatabaseConsts.BookContentTable.COLUMN_CHAPTER_ID, chapterId);
-        bookContentMapper.delete(queryWrapper);
+
+        BookInfo newBookInfo = new BookInfo();
+        newBookInfo.setId(chapter.getBookId());
+        newBookInfo.setWordCount(bookInfo.getWordCount()-chapter.getChapterWordCount());
+        newBookInfo.setUpdateTime(LocalDateTime.now());
+        if (Objects.equals(bookInfo.getLastChapterId(), chapterId)){
+            QueryWrapper<BookChapter> bookChapterQueryWrapper = new QueryWrapper<>();
+            bookChapterQueryWrapper.eq(DatabaseConsts.CommonColumnEnum.ID.getName(), chapterId)
+                    .orderByDesc(DatabaseConsts.CommonColumnEnum.ID.getName())
+                    .last(DatabaseConsts.SqlEnum.LIMIT_1.getSql());
+            BookChapter preBookChapter = bookChapterMapper.selectOne(bookChapterQueryWrapper);
+            Long lastChapterId = 0L;
+            String lastChapterName = "";
+            LocalDateTime lastChapterUpdateTime = null;
+            if (Objects.nonNull(preBookChapter)){
+                lastChapterId = preBookChapter.getId();
+                lastChapterName = preBookChapter.getChapterName();
+                lastChapterUpdateTime = preBookChapter.getUpdateTime();
+            }
+            newBookInfo.setLastChapterId(lastChapterId);
+            newBookInfo.setLastChapterName(lastChapterName);
+            newBookInfo.setLastChapterUpdateTime(lastChapterUpdateTime);
+        }
+        bookInfoMapper.updateById(newBookInfo);
 
         bookChapterCacheManager.evictBookChapterCache(chapterId);
         bookContentCacheManager.evictBookContentCache(chapterId);
+        bookInfoCacheManager.evictBookInfoCache(chapter.getBookId());
+
+        amqpMsgManager.sendBookChangeMsg(chapter.getBookId());
 
         return RestResp.ok();
     }

@@ -60,7 +60,7 @@ public class AuthorController {
         return authorService.getStatus(UserHolder.getUserId());
     }
 
-    @DeleteMapping("chpter/{chapterId}")
+    @DeleteMapping("book/chapter/{chapterId}")
     public RestResp<Void> deleteBookChapter(@PathVariable Long chapterId){
         return bookService.deleteBookChapter(chapterId);
     }
