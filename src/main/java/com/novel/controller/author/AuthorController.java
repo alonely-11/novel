@@ -4,6 +4,7 @@ import com.novel.core.auth.UserHolder;
 import com.novel.core.common.constant.ApiRouterConsts;
 import com.novel.core.common.resp.RestResp;
 import com.novel.dto.req.AuthorRegisterReqDto;
+import com.novel.dto.req.BookAddReqDto;
 import com.novel.dto.req.ChapterUpdateReqDto;
 import com.novel.dto.resp.ChapterContentRespDto;
 import com.novel.service.AuthorService;
@@ -63,6 +64,11 @@ public class AuthorController {
     @DeleteMapping("book/chapter/{chapterId}")
     public RestResp<Void> deleteBookChapter(@PathVariable Long chapterId){
         return bookService.deleteBookChapter(chapterId);
+    }
+
+    @PostMapping("book")
+    public RestResp<Void> publishBook(@Valid @RequestBody BookAddReqDto dto){
+        return bookService.saveBook(dto);
     }
 
 }

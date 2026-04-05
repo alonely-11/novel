@@ -3,6 +3,7 @@ package com.novel.service;
 import com.novel.core.common.req.PageReqDto;
 import com.novel.core.common.resp.PageRespDto;
 import com.novel.core.common.resp.RestResp;
+import com.novel.dto.req.BookAddReqDto;
 import com.novel.dto.req.ChapterUpdateReqDto;
 import com.novel.dto.req.UserCommentReqDto;
 import com.novel.dto.resp.*;
@@ -54,4 +55,6 @@ public interface BookService {
     RestResp<Void> updateBookChapter(Long chapterId, @Valid ChapterUpdateReqDto dto);
 
     RestResp<Void> deleteBookChapter(Long chapterId);
+
+    RestResp<Void> saveBook(@Valid BookAddReqDto dto);
 }

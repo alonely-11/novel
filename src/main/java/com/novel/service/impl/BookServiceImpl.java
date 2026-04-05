@@ -12,7 +12,8 @@ import com.novel.core.common.resp.PageRespDto;
 import com.novel.core.common.resp.RestResp;
 import com.novel.dao.entity.*;
 import com.novel.dao.mapper.*;
-import com.novel.dto.req.ChapterUpdateReqDto;
+import com.novel.dto.AuthorInfoDto;
+import com.novel.dto.req.BookAddReqDto;import com.novel.dto.req.ChapterUpdateReqDto;
 import com.novel.dto.req.UserCommentReqDto;
 import com.novel.dto.resp.*;
 import com.novel.manager.*;
@@ -65,7 +66,7 @@ public class BookServiceImpl implements BookService {
 
     private final BookContentMapper bookContentMapper;
 
-    private final AmqpMsgManager amqpMsgManager;
+    private final AmqpMsgManager amqpMsgManager;private final AuthorInfoCacheManager authorInfoCacheManager;
 
 //    private final UserInfoMapper userInfoMapper;
 
@@ -501,6 +502,37 @@ public class BookServiceImpl implements BookService {
         bookInfoCacheManager.evictBookInfoCache(chapter.getBookId());
 
         amqpMsgManager.sendBookChangeMsg(chapter.getBookId());
+
+        return RestResp.ok();
+    }
+
+    @Override
+    public RestResp<Void> saveBook(BookAddReqDto dto) {
+
+        QueryWrapper<BookInfo> bookInfoQueryWrapper = new QueryWrapper<>();
+        bookInfoQueryWrapper.eq(DatabaseConsts.BookTable.COLUMN_BOOK_NAME, dto.getBookName());
+        if (bookInfoMapper.selectCount(bookInfoQueryWrapper) > 0){
+            return RestResp.fail(ErrorCodeEnum.AUTHOR_BOOK_NAME_EXIST);
+        }
+
+        BookInfo bookInfo = new BookInfo();
+
+        AuthorInfoDto authorInfoDto = authorInfoCacheManager.getAuthor(UserHolder.getUserId());
+        bookInfo.setAuthorId(authorInfoDto.getId());
+        bookInfo.setAuthorName(authorInfoDto.getPenName());
+
+        bookInfo.setWorkDirection(dto.getWorkDirection());
+        bookInfo.setCategoryId(dto.getCategoryId());
+        bookInfo.setCategoryName(dto.getCategoryName());
+        bookInfo.setPicUrl(dto.getPicUrl());
+        bookInfo.setBookName(dto.getBookName());
+        bookInfo.setBookDesc(dto.getBookDesc());
+        bookInfo.setIsVip(dto.getIsVip());
+        bookInfo.setVisitCount(0L);
+        bookInfo.setScore(0);
+        bookInfo.setCreateTime(LocalDateTime.now());
+        bookInfo.setUpdateTime(LocalDateTime.now());
+        bookInfoMapper.insert(bookInfo);
 
         return RestResp.ok();
     }
