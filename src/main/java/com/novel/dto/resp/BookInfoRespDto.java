@@ -1,5 +1,6 @@
 package com.novel.dto.resp;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
 
@@ -39,6 +40,7 @@ public class BookInfoRespDto {
 
     private String lastChapterName;
 
+    @JsonFormat(pattern = "yyy-MM-dd HH:mm")
     private LocalDateTime updateTime;
 
 }

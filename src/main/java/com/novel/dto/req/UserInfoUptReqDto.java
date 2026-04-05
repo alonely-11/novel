@@ -9,7 +9,6 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-@Builder
 public class UserInfoUptReqDto {
 
     private Long userId;

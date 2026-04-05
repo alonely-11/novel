@@ -2,15 +2,21 @@ package com.novel.controller.author;
 
 import com.novel.core.auth.UserHolder;
 import com.novel.core.common.constant.ApiRouterConsts;
+import com.novel.core.common.req.PageReqDto;
+import com.novel.core.common.resp.PageRespDto;
 import com.novel.core.common.resp.RestResp;
 import com.novel.dto.req.AuthorRegisterReqDto;
 import com.novel.dto.req.BookAddReqDto;
+import com.novel.dto.req.ChapterAddReqDto;
 import com.novel.dto.req.ChapterUpdateReqDto;
+import com.novel.dto.resp.BookChapterRespDto;
+import com.novel.dto.resp.BookInfoRespDto;
 import com.novel.dto.resp.ChapterContentRespDto;
 import com.novel.service.AuthorService;
 import com.novel.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -69,6 +75,22 @@ public class AuthorController {
     @PostMapping("book")
     public RestResp<Void> publishBook(@Valid @RequestBody BookAddReqDto dto){
         return bookService.saveBook(dto);
+    }
+
+    @PostMapping("book/chapter/{bookId}")
+    public RestResp<Void> publishBookChapter(@PathVariable Long bookId, @Valid @RequestBody ChapterAddReqDto dto){
+        dto.setBookId(bookId);
+        return bookService.publishBookChapter(dto);
+    }
+
+    @GetMapping("books")
+    public RestResp<PageRespDto<BookInfoRespDto>> listBooks(PageReqDto dto){
+        return bookService.listAuthorBooks(dto);
+    }
+
+    @GetMapping("book/chapters/{bookId}")
+    public RestResp<PageRespDto<BookChapterRespDto>> listBookChapters(@PathVariable Long bookId,PageReqDto dto){
+        return bookService.listBookChapters(bookId,dto);
     }
 
 }

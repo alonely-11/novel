@@ -13,7 +13,9 @@ import com.novel.core.common.resp.RestResp;
 import com.novel.dao.entity.*;
 import com.novel.dao.mapper.*;
 import com.novel.dto.AuthorInfoDto;
-import com.novel.dto.req.BookAddReqDto;import com.novel.dto.req.ChapterUpdateReqDto;
+import com.novel.dto.req.BookAddReqDto;
+import com.novel.dto.req.ChapterAddReqDto;
+import com.novel.dto.req.ChapterUpdateReqDto;
 import com.novel.dto.req.UserCommentReqDto;
 import com.novel.dto.resp.*;
 import com.novel.manager.*;
@@ -66,7 +68,8 @@ public class BookServiceImpl implements BookService {
 
     private final BookContentMapper bookContentMapper;
 
-    private final AmqpMsgManager amqpMsgManager;private final AuthorInfoCacheManager authorInfoCacheManager;
+    private final AmqpMsgManager amqpMsgManager;
+    private final AuthorInfoCacheManager authorInfoCacheManager;
 
 //    private final UserInfoMapper userInfoMapper;
 
@@ -535,6 +538,116 @@ public class BookServiceImpl implements BookService {
         bookInfoMapper.insert(bookInfo);
 
         return RestResp.ok();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public RestResp<Void> publishBookChapter(ChapterAddReqDto dto) {
+
+        BookInfo bookInfo = bookInfoMapper.selectById(dto.getBookId());
+        if(!Objects.equals(bookInfo.getAuthorId(),UserHolder.getAuthorId())){
+            return RestResp.fail(ErrorCodeEnum.USER_UN_AUTH);
+        }
+
+        int chapterNum = 0;
+        QueryWrapper<BookChapter> bookChapterQueryWrapper = new QueryWrapper<>();
+        bookChapterQueryWrapper.eq(DatabaseConsts.BookChapterTable.COLUMN_BOOK_ID, dto.getBookId())
+                .orderByDesc(DatabaseConsts.BookChapterTable.COLUMN_CHAPTER_NUM)
+                .last(DatabaseConsts.SqlEnum.LIMIT_1.getSql());
+        BookChapter preBookChapter = bookChapterMapper.selectOne(bookChapterQueryWrapper);
+        if (Objects.nonNull(preBookChapter)){
+            chapterNum = preBookChapter.getChapterNum()+1;
+        }
+
+        //保存章节
+        BookChapter newBookChapter = new BookChapter();
+        newBookChapter.setBookId(dto.getBookId());
+        newBookChapter.setChapterName(dto.getChapterName());
+        newBookChapter.setChapterNum(chapterNum);
+        newBookChapter.setWordCount(dto.getChapterContent().length());
+        newBookChapter.setIsVip(dto.getIsVip());
+        newBookChapter.setCreateTime(LocalDateTime.now());
+        newBookChapter.setUpdateTime(LocalDateTime.now());
+        bookChapterMapper.insert(newBookChapter);
+
+        //保存内容
+        BookContent bookContent = new BookContent();
+        bookContent.setChapterId(newBookChapter.getId());
+        bookContent.setContent(dto.getChapterContent());
+        bookContent.setCreateTime(LocalDateTime.now());
+        bookContent.setUpdateTime(LocalDateTime.now());
+        bookContentMapper.insert(bookContent);
+
+        //更新小说信息
+        BookInfo updateBookInfo = new BookInfo();
+        updateBookInfo.setId(dto.getBookId());
+        updateBookInfo.setWordCount(bookInfo.getWordCount()+newBookChapter.getWordCount());
+        updateBookInfo.setLastChapterId(newBookChapter.getId());
+        updateBookInfo.setLastChapterName(dto.getChapterName());
+        updateBookInfo.setLastChapterUpdateTime(LocalDateTime.now());
+        updateBookInfo.setUpdateTime(LocalDateTime.now());
+        bookInfoMapper.updateById(updateBookInfo);
+
+        bookInfoCacheManager.evictBookInfoCache(dto.getBookId());
+
+        amqpMsgManager.sendBookChangeMsg(dto.getBookId());
+
+        return RestResp.ok();
+    }
+
+    @Override
+    public RestResp<PageRespDto<BookInfoRespDto>> listAuthorBooks(PageReqDto dto) {
+
+        IPage<BookInfo> page = new Page<>();
+        page.setCurrent(dto.getPageNum());
+        page.setSize(dto.getPageSize());
+
+        QueryWrapper<BookInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc(DatabaseConsts.CommonColumnEnum.CREATE_TIME.getName())
+                .eq(DatabaseConsts.BookTable.AUTHOR_ID,UserHolder.getAuthorId());
+        IPage<BookInfo> bookInfoPage = bookInfoMapper.selectPage(page,queryWrapper);
+
+        List<BookInfoRespDto> bookInfoRespDtos = bookInfoPage.getRecords().stream().map(v -> BookInfoRespDto.builder()
+                .id(v.getId())
+                .bookName(v.getBookName())
+                .picUrl(v.getPicUrl())
+                .categoryName(v.getCategoryName())
+                .wordCount(v.getWordCount())
+                .visitCount(v.getVisitCount())
+                .updateTime(v.getUpdateTime())
+                .build()).toList();
+
+        return RestResp.ok(PageRespDto.of(
+                dto.getPageNum(),
+                dto.getPageSize(),
+                page.getTotal(),
+                bookInfoRespDtos
+        ));
+    }
+
+    @Override
+    public RestResp<PageRespDto<BookChapterRespDto>> listBookChapters(Long bookId, PageReqDto dto) {
+
+        IPage<BookChapter> page = new Page<>();
+        page.setCurrent(dto.getPageNum());
+        page.setSize(dto.getPageSize());
+
+        QueryWrapper<BookChapter> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc(DatabaseConsts.BookChapterTable.COLUMN_CHAPTER_NUM)
+                .eq(DatabaseConsts.BookChapterTable.COLUMN_BOOK_ID, bookId);
+        bookChapterMapper.selectPage(page,queryWrapper);
+        return RestResp.ok(PageRespDto.of(
+                dto.getPageNum(),
+                dto.getPageSize(),
+                page.getTotal(),
+                page.getRecords().stream().map(v->
+                        BookChapterRespDto.builder()
+                                .id(v.getId())
+                                .chapterName(v.getChapterName())
+                                .chapterUpdateTime(v.getUpdateTime())
+                                .isVip(v.getIsVip())
+                                .build()).toList()
+        ));
     }
 
 //    @Override

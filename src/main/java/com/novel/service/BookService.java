@@ -4,6 +4,7 @@ import com.novel.core.common.req.PageReqDto;
 import com.novel.core.common.resp.PageRespDto;
 import com.novel.core.common.resp.RestResp;
 import com.novel.dto.req.BookAddReqDto;
+import com.novel.dto.req.ChapterAddReqDto;
 import com.novel.dto.req.ChapterUpdateReqDto;
 import com.novel.dto.req.UserCommentReqDto;
 import com.novel.dto.resp.*;
@@ -57,4 +58,10 @@ public interface BookService {
     RestResp<Void> deleteBookChapter(Long chapterId);
 
     RestResp<Void> saveBook(@Valid BookAddReqDto dto);
+
+    RestResp<Void> publishBookChapter(@Valid ChapterAddReqDto dto);
+
+    RestResp<PageRespDto<BookInfoRespDto>> listAuthorBooks(PageReqDto dto);
+
+    RestResp<PageRespDto<BookChapterRespDto>> listBookChapters(Long bookId, PageReqDto dto);
 }
