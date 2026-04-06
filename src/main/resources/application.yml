@@ -42,11 +42,11 @@ server:
 spring:
   ai:
     openai:
-      api-key: sk-rrrupturhdofbiqzjutduuiceecpvfqlnvmgcyiaipbdikoi
-      base-url: https://api.siliconflow.cn
+      api-key: sk-de6172633d484c9bbbb6be888a0ca380
+      base-url: https://dashscope.aliyuncs.com/compatible-mode
       chat:
         options:
-          model: deepseek-ai/DeepSeek-R1-0528-Qwen3-8B
+          model: qwen3-max
 
 
 
