@@ -17,6 +17,12 @@ public class AuthorAiController {
 
     private final ChatClient chatClient;
 
+    /**
+     * AI扩写
+     * @param text
+     * @param ratio
+     * @return
+     */
     @PostMapping("/expand")
     public RestResp<String> expandText(String text,Double ratio){
         String prompt = "请将以下文本扩写为原长度的" + ratio/100 + "倍：" + text;
