@@ -34,8 +34,7 @@ public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
             for (int i = 0; i < length; i++) {
                 escapeValues[i] = values[i];
                 int index = i;
-                REPLACE_RULE.forEach(
-                    (k, v) -> escapeValues[index] = escapeValues[index].replaceAll(k, v));
+                REPLACE_RULE.forEach((k,v)->escapeValues[index] = escapeValues[index].replaceAll(k,v));
             }
             return escapeValues;
         }

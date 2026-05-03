@@ -33,6 +33,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -226,7 +227,8 @@ public class BookServiceImpl implements BookService {
 
         List<BookInfoRespDto> respDtoList = new ArrayList<>();
         Set<Integer> recIdIndexSet = new HashSet<>();
-        Random rand= SecureRandom.getInstanceStrong();
+        // Random rand= SecureRandom.getInstanceStrong();
+        Random rand = ThreadLocalRandom.current();
 
         while (respDtoList.size() < actuallyRecCount && recIdIndexSet.size() < candidateIdList.size()) {
             int recIdIndex = rand.nextInt(candidateIdList.size());
