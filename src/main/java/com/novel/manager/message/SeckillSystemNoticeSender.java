@@ -3,6 +3,9 @@ package com.novel.manager.message;
 import com.novel.core.common.constant.MessageSenderTypeConsts;
 import org.springframework.stereotype.Component;
 
+/**
+ * 秒杀活动的系统通知发送器
+ */
 @Component(value = MessageSenderTypeConsts.SECKILL_SYS_NOTICE_SENDER)
 public class SeckillSystemNoticeSender extends AbstractSysNoticeSender {
 
