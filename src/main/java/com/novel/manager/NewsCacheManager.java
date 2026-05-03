@@ -1,8 +1,7 @@
 package com.novel.manager;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.novel.core.common.constant.DatabaseConsts;
-import com.novel.core.common.resp.RestResp;
+import com.novel.core.constant.DatabaseConsts;
 import com.novel.core.constant.CacheConsts;
 import com.novel.dao.entity.NewsContent;
 import com.novel.dao.entity.NewsInfo;
@@ -11,7 +10,6 @@ import com.novel.dto.resp.NewsInfoRespDto;
 import com.novel.manager.dao.NewsContentDaoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.novel.controller.front;
 
-import com.novel.core.common.constant.ApiRouterConsts;
+import com.novel.core.constant.ApiRouterConsts;
 import com.novel.core.common.resp.RestResp;
 import com.novel.dto.resp.ImgVerifyCodeRespDto;
 import com.novel.service.ResourceService;

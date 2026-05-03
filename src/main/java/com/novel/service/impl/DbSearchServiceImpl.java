@@ -10,11 +10,15 @@ import com.novel.dto.req.BookSearchReqDto;
 import com.novel.dto.resp.BookInfoRespDto;
 import com.novel.service.SearchService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
+@ConditionalOnProperty(prefix = "spring.elasticsearch",name = "enable", havingValue = "false")
 @Service
 @RequiredArgsConstructor
-public class SearchServiceImpl implements SearchService {
+@Slf4j
+public class DbSearchServiceImpl implements SearchService {
 
     private final BookInfoMapper bookInfoMapper;
 

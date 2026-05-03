@@ -1,6 +1,6 @@
 package com.novel.controller.author;
 
-import com.novel.core.common.constant.ApiRouterConsts;
+import com.novel.core.constant.ApiRouterConsts;
 import com.novel.core.common.resp.RestResp;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

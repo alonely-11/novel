@@ -1,6 +1,6 @@
 package com.novel.manager.message;
 
-import com.novel.core.common.constant.MessageSenderTypeConsts;
+import com.novel.core.constant.MessageSenderTypeConsts;
 import com.novel.core.config.MailProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.mail.javamail.JavaMailSender;

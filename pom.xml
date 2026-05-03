@@ -172,6 +172,13 @@
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>co.elastic.clients</groupId>
+            <artifactId>elasticsearch-java</artifactId>
+            <version>8.10.2</version> <!-- 建议与你的 ES 服务端版本一致 -->
+        </dependency>
+
+
 
 
 

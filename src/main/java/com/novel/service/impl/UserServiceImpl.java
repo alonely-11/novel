@@ -1,9 +1,9 @@
 package com.novel.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.novel.core.common.constant.DatabaseConsts;
+import com.novel.core.constant.DatabaseConsts;
 import com.novel.core.common.constant.ErrorCodeEnum;
-import com.novel.core.common.constant.SystemConfigConsts;
+import com.novel.core.constant.SystemConfigConsts;
 import com.novel.core.common.exception.BusinessException;
 import com.novel.core.common.resp.RestResp;
 import com.novel.core.util.JwtUtils;

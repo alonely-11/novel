@@ -1,10 +1,9 @@
 package com.novel.core.auth;
 
-import com.novel.core.common.constant.ApiRouterConsts;
+import com.novel.core.constant.ApiRouterConsts;
 import com.novel.core.common.constant.ErrorCodeEnum;
 import com.novel.core.common.exception.BusinessException;
 import com.novel.core.util.JwtUtils;
-import com.novel.dao.entity.AuthorInfo;
 import com.novel.dto.AuthorInfoDto;
 import com.novel.manager.AuthorInfoCacheManager;
 import com.novel.manager.UserInfoCacheManager;

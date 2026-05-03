@@ -1,7 +1,7 @@
 package com.novel.controller.front;
 
 import com.novel.core.auth.UserHolder;
-import com.novel.core.common.constant.ApiRouterConsts;
+import com.novel.core.constant.ApiRouterConsts;
 import com.novel.core.common.req.PageReqDto;
 import com.novel.core.common.resp.PageRespDto;
 import com.novel.core.common.resp.RestResp;

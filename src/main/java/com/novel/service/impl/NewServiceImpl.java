@@ -1,7 +1,7 @@
 package com.novel.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.novel.core.common.constant.DatabaseConsts;
+import com.novel.core.constant.DatabaseConsts;
 import com.novel.core.common.resp.RestResp;
 import com.novel.dao.entity.NewsContent;
 import com.novel.dao.entity.NewsInfo;
@@ -12,12 +12,8 @@ import com.novel.manager.NewsCacheManager;
 import com.novel.service.NewsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

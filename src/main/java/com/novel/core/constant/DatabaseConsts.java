@@ -1,4 +1,4 @@
-package com.novel.core.common.constant;
+package com.novel.core.constant;
 
 import lombok.Getter;
 

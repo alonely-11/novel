@@ -1,7 +1,7 @@
 package com.novel.controller.author;
 
 import com.novel.core.auth.UserHolder;
-import com.novel.core.common.constant.ApiRouterConsts;
+import com.novel.core.constant.ApiRouterConsts;
 import com.novel.core.common.req.PageReqDto;
 import com.novel.core.common.resp.PageRespDto;
 import com.novel.core.common.resp.RestResp;
@@ -16,7 +16,6 @@ import com.novel.service.AuthorService;
 import com.novel.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

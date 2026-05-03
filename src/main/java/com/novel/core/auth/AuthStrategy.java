@@ -1,7 +1,7 @@
 package com.novel.core.auth;
 
 import com.novel.core.common.constant.ErrorCodeEnum;
-import com.novel.core.common.constant.SystemConfigConsts;
+import com.novel.core.constant.SystemConfigConsts;
 import com.novel.core.common.exception.BusinessException;
 import com.novel.core.util.JwtUtils;
 import com.novel.dto.UserInfoDto;

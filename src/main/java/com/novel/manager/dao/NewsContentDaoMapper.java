@@ -1,7 +1,7 @@
 package com.novel.manager.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.novel.core.common.constant.DatabaseConsts;
+import com.novel.core.constant.DatabaseConsts;
 import com.novel.dao.entity.NewsContent;
 import com.novel.dao.mapper.NewsContentMapper;
 import lombok.RequiredArgsConstructor;
