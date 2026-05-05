@@ -2,6 +2,7 @@ package com.novel.core.config;
 
 import com.novel.core.constant.ApiRouterConsts;
 import com.novel.core.interceptor.AuthInterceptor;
+import com.novel.core.interceptor.FlowLimitInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -20,8 +21,16 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final AuthInterceptor authInterceptor;
 
+    private final FlowLimitInterceptor flowLimitInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+
+        // 流量限制拦截器
+        registry.addInterceptor(flowLimitInterceptor)
+                .addPathPatterns("/**")
+                .order(0);
+
 
         // 权限认证拦截
         registry.addInterceptor(authInterceptor)

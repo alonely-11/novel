@@ -2,14 +2,13 @@ package com.novel.core.filter;
 
 import com.novel.core.wrapper.XssHttpServletRequestWrapper;
 import jakarta.servlet.*;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-//@ConditionalOnProperty(value = "novel.xss.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "novel.xss.enabled", havingValue = "true")
 @Component
 public class XssFilter implements Filter {
 
