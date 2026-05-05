@@ -178,6 +178,11 @@
             <version>8.10.2</version> <!-- 建议与你的 ES 服务端版本一致 -->
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
 
 
 

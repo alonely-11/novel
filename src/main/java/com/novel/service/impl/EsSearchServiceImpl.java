@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@ConditionalOnProperty(prefix = "spring.elasticsearch",name = "enable", havingValue = "true")
+@ConditionalOnProperty(prefix = "spring.elasticsearch",name = "enabled", havingValue = "true")
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -61,7 +61,7 @@ public class EsSearchServiceImpl implements SearchService {
             //设置高亮显示
             searchBuilder.highlight(h->h
                     .fields(EsConsts.BookIndex.FIELD_BOOK_NAME,
-                            t->t.preTags("<em style='color:red'>'").postTags("</em>"))
+                            t->t.preTags("<em style='color:red'>").postTags("</em>"))
                     .fields(EsConsts.BookIndex.FIELD_AUTHOR_NAME,
                             t->t.preTags("<em style='color:red'>").postTags("</em>")));
             return searchBuilder;
@@ -130,7 +130,7 @@ public class EsSearchServiceImpl implements SearchService {
             if(Objects.nonNull(condition.getWorkDirection())){
                 b.must(TermQuery.of(m->m
                         .field(EsConsts.BookIndex.FIELD_WORK_DIRECTION)
-                        .value(condition.getCategoryId()))
+                        .value(condition.getWorkDirection()))
                         ._toQuery());
             }
 

@@ -81,7 +81,7 @@ spring:
     # 是否开启 Elasticsearch 搜索引擎功能：true-开启 false-不开启
     enabled: true
     uris:
-      - https://my-deployment-ce7ca3.es.us-central1.gcp.cloud.es.io:9243
+      - http://192.168.180.142:9200
     username: elastic
     password: qTjgYVKSuExX6tWAsDuvuvwl
     # 设置 ssl 的认证模式，如果该配置项为 none ，说明不需要认证，信任所有的 ssl 证书。
@@ -249,8 +249,8 @@ novel:
   qiniu:
     access-key: U4dA0ldIPwsRiYPAsAtey6vuMjVl234zlbTpVHHg
     secret-key: _SjqnGojFyNPT1GFSEzcT0C-Nyw1EWYTd9EJZ5rQ
-    bucket-name: novel-ai
-    referring-domain: tcyrvnlul.hn-bkt.clouddn.com
+    bucket-name: caffiene-kitty
+    referring-domain: tei1epv6f.hn-bkt.clouddn.com
 
 --- #------------------- dev 特定配置---------------------------
 spring:

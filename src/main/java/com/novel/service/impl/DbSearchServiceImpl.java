@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
-@ConditionalOnProperty(prefix = "spring.elasticsearch",name = "enable", havingValue = "false")
+@ConditionalOnProperty(prefix = "spring.elasticsearch",name = "enabled", havingValue = "false")
 @Service
 @RequiredArgsConstructor
 @Slf4j
