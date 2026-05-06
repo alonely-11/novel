@@ -27,7 +27,7 @@ spring:
 
   flyway:
     # 是否开启 Flyway
-    enabled: false
+    enabled: true
     # initialize the schema history table
     baseline-on-migrate: true
 #    url: jdbc:mysql://localhost:3306/novel?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
@@ -61,8 +61,55 @@ spring:
   # 配置是 ShardingSphere-JDBC 中唯一与应用开发者交互的模块，
   # 通过它可以快速清晰的理解 ShardingSphere-JDBC 所提供的功能。
   shardingsphere:
-    # 是否开启分库分表
-    enabled: false
+    # 是否开启 shardingsphere
+    enabled: true
+    props:
+      # 是否在日志中打印 SQL
+      sql-show: true
+    # 模式配置
+    mode:
+      # 单机模式
+      type: Standalone
+      repository:
+        # 文件持久化
+        type: File
+        props:
+          # 元数据存储路径
+          path: .shardingsphere
+      # 使用本地配置覆盖持久化配置
+      overwrite: true
+    # 数据源配置
+    datasource:
+      names: ds_0
+      ds_0:
+        type: com.zaxxer.hikari.HikariDataSource
+        driverClassName: com.mysql.cj.jdbc.Driver
+        jdbcUrl: jdbc:mysql://localhost:3306/novel?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+        username: root
+        password: JBTM.gk.1
+    # 规则配置
+    rules:
+      # 数据分片
+      sharding:
+        tables:
+          # book_content 表
+          book_content:
+            # 数据节点
+            actual-data-nodes: ds_$->{0}.book_content$->{0..9}
+            # 分表策略
+            table-strategy:
+              standard:
+                # 分片列名称
+                sharding-column: chapter_id
+                # 分片算法名称
+                sharding-algorithm-name: bookContentSharding
+        sharding-algorithms:
+          bookContentSharding:
+            # 行表达式分片算法，使用 Groovy 的表达式，提供对 SQL 语句中的 = 和 IN 的分片操作支持
+            type: INLINE
+            props:
+              # 分片算法的行表达式
+              algorithm-expression: book_content$->{chapter_id % 10}
 
 --- #---------------------中间件配置---------------------------
 spring:
@@ -130,9 +177,9 @@ spring:
     admin:
       client:
         # 是否开启 Spring Boot Admin 客户端
-        enabled: false
+        enabled: true
         # Spring Boot Admin 服务端注册地址
-        url: http://localhost:8080
+        url: http://localhost:8000
         # Spring Boot Admin 服务端认证用户名
         username: novel
         # Spring Boot Admin 服务端认证密码
